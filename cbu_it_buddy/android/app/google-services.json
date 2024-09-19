@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "871680129456",
+    "project_id": "cbu-it-buddy",
+    "storage_bucket": "cbu-it-buddy.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:871680129456:android:696614655f6fddb7803e75",
+        "android_client_info": {
+          "package_name": "com.android.application"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9Y7KwhlJklGrVXMfGDmZJBfcPec5TS8E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:871680129456:android:fe36364f77412c23803e75",
+        "android_client_info": {
+          "package_name": "com.buddy.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9Y7KwhlJklGrVXMfGDmZJBfcPec5TS8E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
