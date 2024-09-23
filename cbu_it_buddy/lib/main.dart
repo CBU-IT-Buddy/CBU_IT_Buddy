@@ -1,6 +1,7 @@
-import 'package:cbu_it_buddy/app_bar.dart'; // Custom AppBar file import
 import 'package:flutter/material.dart';
+import 'app_bar.dart'; // Custom AppBar file import
 import 'home_page.dart'; // HomePage file import
+import 'feedback_page.dart'; // Import FeedbackPage
 
 //////////////////////////////////////////////
 // Main function to run the app
@@ -15,23 +16,21 @@ void main() {
 class CBUITBuddyApp extends StatelessWidget {
   const CBUITBuddyApp({super.key});
 
+  // Variable to control which page is shown first
+  static const bool showFeedbackPageFirst = true; // Set to false to show HomePage first
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       //////////////////////////////////////////////
-      // Scaffold to provide structure for the app
+      // Dynamically set which page to show first
       //////////////////////////////////////////////
-      home: Scaffold(
-        //////////////////////////////////////////////
-        // Custom AppBar at the top of the screen
-        //////////////////////////////////////////////
-        appBar: buildAppBar(),
-
-        //////////////////////////////////////////////
-        // HomePage widget as the body of the app
-        //////////////////////////////////////////////
-        body: const CBUITBuddyHomePage(),
-      ),
+      home: showFeedbackPageFirst 
+          ? const FeedbackPage()  // Show FeedbackPage if true
+          : Scaffold(
+              appBar: buildAppBar(context), // Custom AppBar
+              body: const CBUITBuddyHomePage(), // HomePage
+            ),
     );
   }
 }

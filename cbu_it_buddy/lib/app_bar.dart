@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'feedback_page.dart'; // Import the FeedbackPage
 
 //////////////////////////////////////////////
 // Function to build the AppBar for the app
 //////////////////////////////////////////////
-AppBar buildAppBar() {
+AppBar buildAppBar(BuildContext context) {  // Pass BuildContext as a parameter
   return AppBar(
     //////////////////////////////////////////////
     // Title for the AppBar (centered)
@@ -27,12 +28,27 @@ AppBar buildAppBar() {
     actions: [
       Padding(
         padding: const EdgeInsets.only(right: 10.0),
-        child: Image.asset(
-          '/Users/dartagnancalitz/CBU_IT_Buddy/cbu_it_buddy/lib/assets/images/cbu_logo.png', // Make sure the path matches your folder structure
-          width: 50, // Set a fixed width to prevent overflow
-          height: 50, // Set a fixed height to prevent overflow
-          fit: BoxFit
-              .contain, // Ensure the image fits within the given dimensions
+        child: Row(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.feedback),
+              onPressed: () {
+                // Navigate to Feedback page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const FeedbackPage(),
+                  ),
+                );
+              },
+            ),
+            Image.asset(
+              '/Users/dartagnancalitz/CBU_IT_Buddy/cbu_it_buddy/lib/assets/images/cbu_logo.png', // Make sure the path matches your folder structure
+              width: 50,
+              height: 50,
+              fit: BoxFit.contain,
+            ),
+          ],
         ),
       ),
     ],
