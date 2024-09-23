@@ -6,13 +6,15 @@ import 'home_page.dart'; // HomePage file import
 // Main function to run the app
 //////////////////////////////////////////////
 void main() {
-  runApp(CBUITBuddyApp()); // Entry point of the app
+  runApp(const CBUITBuddyApp()); // Entry point of the app
 }
 
 //////////////////////////////////////////////
 // Main StatelessWidget class for the app
 //////////////////////////////////////////////
 class CBUITBuddyApp extends StatelessWidget {
+  const CBUITBuddyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -28,7 +30,7 @@ class CBUITBuddyApp extends StatelessWidget {
         //////////////////////////////////////////////
         // HomePage widget as the body of the app
         //////////////////////////////////////////////
-        body: CBUITBuddyHomePage(),
+        body: const CBUITBuddyHomePage(),
       ),
     );
   }

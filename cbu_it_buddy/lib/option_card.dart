@@ -4,7 +4,7 @@ class OptionCard extends StatelessWidget {
   final String title;
   final String subtitle;
 
-  OptionCard({required this.title, required this.subtitle});
+  const OptionCard({super.key, required this.title, required this.subtitle});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +12,7 @@ class OptionCard extends StatelessWidget {
     // Container for each option card
     //////////////////////////////////////////////
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Card(
         elevation: 3,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -27,17 +27,17 @@ class OptionCard extends StatelessWidget {
               //////////////////////////////////////////////
               Text(
                 title,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                 overflow: TextOverflow.visible, // Prevent text wrapping
               ),
-              SizedBox(height: 5),
+              const SizedBox(height: 5),
               //////////////////////////////////////////////
               // Subtitle text for the card
               //////////////////////////////////////////////
               Text(
                 subtitle,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey, fontSize: 12),
+                style: const TextStyle(color: Colors.grey, fontSize: 12),
                 overflow: TextOverflow.visible, // Prevent text wrapping
               ),
             ],

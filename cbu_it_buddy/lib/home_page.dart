@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'option_card.dart';
 
 class CBUITBuddyHomePage extends StatelessWidget {
+  const CBUITBuddyHomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -9,7 +11,7 @@ class CBUITBuddyHomePage extends StatelessWidget {
         //////////////////////////////////////////////
         // Main Column to hold the icon and options
         //////////////////////////////////////////////
-        Column(
+        const Column(
           children: [
             SizedBox(height: 40.0), // Added spacing at the top
             Icon(Icons.handshake, size: 80), // Placeholder for the hand icon
@@ -19,7 +21,7 @@ class CBUITBuddyHomePage extends StatelessWidget {
             // Positioned just above the chat bar
             //////////////////////////////////////////////
             Padding(
-              padding: const EdgeInsets.only(
+              padding: EdgeInsets.only(
                   bottom: 80.0), // Space between buttons and chat box
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -61,17 +63,17 @@ class CBUITBuddyHomePage extends StatelessWidget {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                     ),
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 //////////////////////////////////////////////
                 // Send button for sending messages
                 //////////////////////////////////////////////
                 IconButton(
-                  icon: Icon(Icons.send,
-                      color: const Color.fromARGB(255, 11, 54, 90)),
+                  icon: const Icon(Icons.send,
+                      color: Color.fromARGB(255, 11, 54, 90)),
                   onPressed: () {
                     // Send message action
                   },
