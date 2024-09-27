@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'chat_bubbles.dart';
 import 'option_card.dart';
 
 //////////////////////////////////////////////
-// StatefulWidget to manage the chat bar state
+// StatefulWidget to manage the chat bar and messages
 //////////////////////////////////////////////
 class CBUITBuddyHomePage extends StatefulWidget {
   @override
@@ -11,115 +12,178 @@ class CBUITBuddyHomePage extends StatefulWidget {
 
 class _CBUITBuddyHomePageState extends State<CBUITBuddyHomePage> {
   //////////////////////////////////////////////
-  // Holds the text for the chat bar
+  // Holds the chat messages (user and AI)
+  //////////////////////////////////////////////
+  List<Map<String, dynamic>> _chatMessages = [];
+
+  //////////////////////////////////////////////
+  // Holds the current message typed by the user
   //////////////////////////////////////////////
   String _chatMessage = "";
 
   //////////////////////////////////////////////
-  // FocusNode to manage focus for the TextField
+  // TextEditingController for the TextField input
+  //////////////////////////////////////////////
+  final TextEditingController _textController = TextEditingController();
+
+  //////////////////////////////////////////////
+  // FocusNode to handle keyboard focus on the TextField
   //////////////////////////////////////////////
   final FocusNode _focusNode = FocusNode();
 
   //////////////////////////////////////////////
+  // State variable to check if a message has been submitted
+  //////////////////////////////////////////////
+  bool _hasSubmittedMessage = false;
+
+  //////////////////////////////////////////////
+  // Function to handle message submission
+  // Adds user message and AI response to the chat
+  //////////////////////////////////////////////
+  void _handleSubmitMessage() async {
+    if (_chatMessage.isNotEmpty) {
+      // Add user message to the chat
+      setState(() {
+        _chatMessages.add({
+          "message": _chatMessage,
+          "isUserMessage": true, // User's message on the right
+        });
+        _chatMessage = ""; // Clear the input
+        _textController.clear(); // Clear the text input field
+        _hasSubmittedMessage =
+            true; // Update state to indicate message submission
+      });
+
+      // Simulate AI response delay (e.g., 1 second)
+      await Future.delayed(Duration(seconds: 1));
+
+      // Add a mock AI response after the delay
+      setState(() {
+        _chatMessages.add({
+          "message": "This is a generic AI response.", // Mock AI response
+          "isUserMessage": false, // AI message on the left
+        });
+      });
+    }
+  }
+
+  //////////////////////////////////////////////
   // Function to handle option card selection
   // Updates the chat bar with the title of the tapped option
+  // and submits the message automatically
   //////////////////////////////////////////////
   void _handleOptionTap(String title) {
     setState(() {
       _chatMessage = title; // Set the chat bar text to the option card title
+      _textController.text = _chatMessage; // Update the TextField controller
     });
     _focusNode
         .requestFocus(); // Request focus for the TextField to show keyboard
+
+    // Automatically submit the message
+    _handleSubmitMessage();
   }
 
   @override
   void dispose() {
     _focusNode.dispose(); // Clean up the focus node when the widget is disposed
+    _textController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Setting resizeToAvoidBottomInset to true to move widgets above the keyboard
-      resizeToAvoidBottomInset: true,
-      body: Stack(
+      resizeToAvoidBottomInset:
+          true, // Adjust the layout when the keyboard appears
+      body: Column(
         children: [
-          // Main Column to hold the icon and options
-          Column(
-            children: [
-              SizedBox(height: 40.0), // Added spacing at the top
-              Icon(Icons.handshake, size: 80), // Placeholder for the hand icon
-              Spacer(), // Pushes the options down
-              // Horizontally scrollable row of option cards
-              Padding(
-                padding: const EdgeInsets.only(
-                    bottom: 80.0), // Space between buttons and chat box
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      SizedBox(width: 16.0),
-                      OptionCard(
-                        title: "Reset Password",
-                        subtitle: "All Accounts",
-                        onTap:
-                            _handleOptionTap, // Pass the handler to the OptionCard
-                      ),
-                      OptionCard(
-                        title: "Reset MFA",
-                        subtitle: "Microsoft Authenticator, phone number",
-                        onTap:
-                            _handleOptionTap, // Pass the handler to the OptionCard
-                      ),
-                      OptionCard(
-                        title: "WiFi - Problems",
-                        subtitle: "CBU-SECURE, CBU...",
-                        onTap:
-                            _handleOptionTap, // Pass the handler to the OptionCard
-                      ),
-                      // Add more option cards if needed
-                      SizedBox(width: 16.0),
-                    ],
-                  ),
+          //////////////////////////////////////////////
+          // Expanded widget to display the chat bubbles
+          //////////////////////////////////////////////
+          Expanded(
+            child: ListView.builder(
+              reverse: true, // Newest messages at the bottom
+              itemCount: _chatMessages.length,
+              itemBuilder: (context, index) {
+                final messageData =
+                    _chatMessages[_chatMessages.length - 1 - index];
+                return ChatBubble(
+                  message: messageData['message'],
+                  isUserMessage: messageData['isUserMessage'],
+                );
+              },
+            ),
+          ),
+          //////////////////////////////////////////////
+          // Option cards only shown if no message has been submitted
+          //////////////////////////////////////////////
+          if (!_hasSubmittedMessage) // Conditional rendering of option cards
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                child: Row(
+                  children: [
+                    SizedBox(width: 16.0),
+                    OptionCard(
+                      title: "Reset Password",
+                      subtitle: "All Accounts",
+                      onTap:
+                          _handleOptionTap, // Pass the handler to the OptionCard
+                    ),
+                    OptionCard(
+                      title: "Reset MFA",
+                      subtitle: "Microsoft Authenticator, phone number",
+                      onTap:
+                          _handleOptionTap, // Pass the handler to the OptionCard
+                    ),
+                    OptionCard(
+                      title: "WiFi - Problems",
+                      subtitle: "CBU-SECURE, CBU...",
+                      onTap:
+                          _handleOptionTap, // Pass the handler to the OptionCard
+                    ),
+                    SizedBox(width: 16.0),
+                  ],
                 ),
               ),
-            ],
-          ),
-          // Chat Bar positioned at the bottom of the screen
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  // Message input field
-                  Expanded(
-                    child: TextField(
-                      focusNode:
-                          _focusNode, // Attach the FocusNode to the TextField
-                      decoration: InputDecoration(
-                        hintText: "Type your message...",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+            ),
+          //////////////////////////////////////////////
+          // Chat Bar at the bottom of the screen
+          //////////////////////////////////////////////
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                // Expanded TextField for user input
+                Expanded(
+                  child: TextField(
+                    focusNode: _focusNode, // Attach focus to the TextField
+                    controller: _textController, // Handle user input
+                    decoration: InputDecoration(
+                      hintText: "Type your message...",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
                       ),
-                      controller: TextEditingController(
-                          text: _chatMessage), // Autofill chat bar
+                      contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
                     ),
-                  ),
-                  SizedBox(width: 10),
-                  // Send button for sending messages
-                  IconButton(
-                    icon: Icon(Icons.send,
-                        color: const Color.fromARGB(255, 11, 54, 90)),
-                    onPressed: () {
-                      // Send message action
+                    onChanged: (value) {
+                      setState(() {
+                        _chatMessage = value; // Update chat message state
+                      });
                     },
                   ),
-                ],
-              ),
+                ),
+                SizedBox(width: 10),
+                // Send button for submitting messages
+                IconButton(
+                  icon: Icon(Icons.send,
+                      color: const Color.fromARGB(255, 11, 54, 90)),
+                  onPressed:
+                      _handleSubmitMessage, // Call the submit function on press
+                ),
+              ],
             ),
           ),
         ],
