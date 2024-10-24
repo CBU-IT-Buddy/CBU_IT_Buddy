@@ -1,4 +1,4 @@
-#Sun Sep 22 19:30:43 PDT 2024
+#Sun Oct 06 22:21:59 PDT 2024
 base.0=D\:\\Capstone Design\\CBU_IT_Buddy\\cbu_it_buddy\\android\\app\\build\\intermediates\\dex\\release\\minifyReleaseWithR8\\classes.dex
 path.0=classes.dex
 renamed.0=classes.dex

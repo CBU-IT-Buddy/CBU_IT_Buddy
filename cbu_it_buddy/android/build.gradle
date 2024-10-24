@@ -1,26 +1,22 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     repositories {
-        google()  // Required for Google services
+        google()  // Ensure this is present
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.0.2'  // Your Android Gradle Plugin version (adjust if needed)
-        classpath 'com.google.gms:google-services:4.3.15'  // Google Services classpath
+        classpath 'com.android.tools.build:gradle:8.0.2'  // Ensure this matches your Android Gradle Plugin version
+        classpath 'com.google.gms:google-services:4.3.15'  // Add Google Services plugin with the version
     }
 }
 
 allprojects {
     repositories {
-        google()  // Required for resolving Google services
+        google()  // Ensure this is present in allprojects
         mavenCentral()
     }
 }
 
-// Custom build directory, if needed
-rootProject.buildDir = "../build"
-
-// Clean task
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
