@@ -8,14 +8,14 @@ AppBar buildAppBar() {
     //////////////////////////////////////////////
     // Title for the AppBar (centered)
     //////////////////////////////////////////////
-    title: Text("CBU-IT-Buddy"),
+    title: const Text("CBU-IT-Buddy"),
     centerTitle: true,
 
     //////////////////////////////////////////////
     // Leading icon (menu button on the left)
     //////////////////////////////////////////////
     leading: IconButton(
-      icon: Icon(Icons.menu),
+      icon: const Icon(Icons.menu),
       onPressed: () {
         // Action for menu button
       },
@@ -26,13 +26,15 @@ AppBar buildAppBar() {
     //////////////////////////////////////////////
     actions: [
       Padding(
-        padding: EdgeInsets.only(right: 10.0),
-        child: Image.asset(
-          '/Users/dartagnancalitz/CBU_IT_Buddy/cbu_it_buddy/lib/assets/images/cbu_logo.png', // Make sure the path matches your folder structure
+        padding: const EdgeInsets.only(right: 10.0),
+        child: SizedBox(
           width: 50, // Set a fixed width to prevent overflow
           height: 50, // Set a fixed height to prevent overflow
-          fit: BoxFit
-              .contain, // Ensure the image fits within the given dimensions
+          child: Image.asset(
+            'cbu_it_buddy/lib/assets/images/cbu_logo.jpg', // Corrected asset path
+            fit: BoxFit
+                .contain, // Ensure the image fits within the given dimensions
+          ),
         ),
       ),
     ],
