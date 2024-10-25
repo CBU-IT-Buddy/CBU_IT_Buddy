@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'hints.dart';
 import 'dart:math';
 
 class GamePage extends StatefulWidget {
   const GamePage({Key? key}) : super(key: key);
+
   @override
   _GamePageState createState() => _GamePageState();
 }
 
-class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin {
+class _GamePageState extends State<GamePage>
+    with SingleTickerProviderStateMixin {
   final Random _random = Random();
   int _ringingStation = -1; // Initially, no station is ringing
   bool _isRinging = false;
@@ -16,6 +19,13 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
   String _correctAnswer = "";
   int _totalRings = 0; // Counter for ringing times
   final int _maxRings = 5; // Limit ringing to 5 times
+
+  //////////////////////////////////////////////
+  // Hint-related variables
+  // Start with 3 hints and track correct answer streak
+  //////////////////////////////////////////////
+  int _hintCount = 3; // Start with 3 hints
+  int _correctStreak = 0; // Track consecutive correct answers
 
   // Stations
   final int totalStations = 8;
@@ -29,7 +39,11 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
     ["Scan for viruses", "Buy new hardware", "Call help desk"],
     ["Restart the router", "Call IT", "Reboot computer"],
   ];
-  final List<String> correctAnswers = ["Restart", "Scan for viruses", "Restart the router"];
+  final List<String> correctAnswers = [
+    "Restart",
+    "Scan for viruses",
+    "Restart the router"
+  ];
 
   late AnimationController _animationController;
 
@@ -54,7 +68,8 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
   // Schedule the next phone ringing with a random delay
   void scheduleNextRing() {
     if (_totalRings < _maxRings) {
-      int delaySeconds = _random.nextInt(4) + 2; // Random time between 2 and 5 seconds
+      int delaySeconds =
+          _random.nextInt(4) + 2; // Random time between 2 and 5 seconds
       Future.delayed(Duration(seconds: delaySeconds), () {
         if (mounted) {
           _ringPhone();
@@ -68,7 +83,8 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
   // Simulate ringing at a random station
   void _ringPhone() {
     setState(() {
-      _ringingStation = _random.nextInt(totalStations) + 1; // Random station 1-8
+      _ringingStation =
+          _random.nextInt(totalStations) + 1; // Random station 1-8
       _isRinging = true;
       _question = dummyQuestions[_random.nextInt(dummyQuestions.length)];
       _answers = dummyAnswers[dummyQuestions.indexOf(_question)];
@@ -91,18 +107,23 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
       itemBuilder: (context, index) {
         int stationNumber = index + 1;
         return GestureDetector(
-          onTap: _ringingStation == stationNumber ? () => _onStationTap() : null, // Allow tapping only when ringing
+          onTap: _ringingStation == stationNumber
+              ? () => _onStationTap()
+              : null, // Allow tapping only when ringing
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 500),
             decoration: BoxDecoration(
-              color: _ringingStation == stationNumber ? Colors.yellow : Colors.grey[300],
+              color: _ringingStation == stationNumber
+                  ? Colors.yellow
+                  : Colors.grey[300],
               borderRadius: BorderRadius.circular(15),
               border: Border.all(color: Colors.black),
             ),
             child: Center(
               child: Text(
                 'Station $stationNumber',
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -142,14 +163,43 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
         title: Text(_question),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          children: _answers.map((answer) {
-            return ListTile(
-              title: Text(answer),
-              onTap: () {
-                _showAnswerFeedback(answer == _correctAnswer, answer);
-              },
-            );
-          }).toList(),
+          children: [
+            ..._answers.map((answer) {
+              return ListTile(
+                title: Text(answer),
+                onTap: () {
+                  _showAnswerFeedback(answer == _correctAnswer, answer);
+                },
+              );
+            }).toList(),
+            const SizedBox(height: 10),
+            //////////////////////////////////////////////
+            // Add the Hints button below the answer buttons
+            //////////////////////////////////////////////
+            ElevatedButton(
+              onPressed: _hintCount > 0
+                  ? () {
+                      // Trigger the hint sequence
+                      HintManager(
+                        correctStation: _ringingStation,
+                        onHintCompleted: () {
+                          // After the hint, show the question popup again and highlight correct answer
+                          _showAnswerFeedback(true, _correctAnswer);
+                        },
+                      ).showHint(context);
+                      setState(() {
+                        _hintCount--; // Decrease hint count
+                      });
+                    }
+                  : null, // Disable button if no hints available
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _hintCount > 0
+                    ? Colors.blue
+                    : Colors.grey, // Grey out if no hints left
+              ),
+              child: Text('Hint ($_hintCount left)'),
+            ),
+          ],
         ),
       ),
     );
@@ -184,6 +234,17 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
               setState(() {
                 _ringingStation = -1; // Reset the ringing station
                 _isRinging = false; // Stop ringing
+                if (isCorrect) {
+                  _correctStreak++; // Increase correct streak
+                  //////////////////////////////////////////////
+                  // Add hint after 3 consecutive correct answers
+                  //////////////////////////////////////////////
+                  if (_correctStreak % 3 == 0) {
+                    _hintCount++; // Add a hint after 3 correct answers
+                  }
+                } else {
+                  _correctStreak = 0; // Reset streak on wrong answer
+                }
               });
               // Schedule the next call after clicking "Next Call"
               scheduleNextRing();
