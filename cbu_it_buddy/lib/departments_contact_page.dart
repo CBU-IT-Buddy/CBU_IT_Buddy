@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 // dcp  StatelessWidget
 //////////////////////////////////////////////
 class DepartmentsContactPage extends StatelessWidget {
-  const DepartmentsContactPage({Key? key}) : super(key: key);
+  const DepartmentsContactPage({super.key});
 
   @override
   Widget build(BuildContext context) {

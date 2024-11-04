@@ -113,7 +113,7 @@ class MainPage extends StatelessWidget {
                 // Navigate to the IT Office Game page
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => GamePage()),
+                  MaterialPageRoute(builder: (context) => const GamePage()),
                 );
               },
             ),
