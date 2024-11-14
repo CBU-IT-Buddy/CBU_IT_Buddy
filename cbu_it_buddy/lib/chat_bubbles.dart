@@ -6,37 +6,84 @@ import 'package:flutter/material.dart';
 class ChatBubble extends StatelessWidget {
   final String message; // Message text
   final bool isUserMessage; // Check if it's a user or AI message
+  final TextStyle? userMessageStyle; // Custom style for user message
+  final TextStyle? aiMessageStyle; // Custom style for AI message
+  final EdgeInsetsGeometry? padding; // Custom padding for bubble
+  final EdgeInsetsGeometry? margin; // Custom margin for bubble
 
-  ChatBubble({required this.message, required this.isUserMessage});
+  const ChatBubble({
+    Key? key,
+    required this.message,
+    required this.isUserMessage,
+    this.userMessageStyle,
+    this.aiMessageStyle,
+    this.padding,
+    this.margin,
+  }) : super(key: key);
 
+  //////////////////////////////////////////////
+  // Build method for the ChatBubble UI
+  //////////////////////////////////////////////
   @override
   Widget build(BuildContext context) {
     return Align(
+      //////////////////////////////////////////////
+      // Alignment based on message type (user or AI)
+      //////////////////////////////////////////////
       alignment: isUserMessage ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-        padding: EdgeInsets.all(12.0),
+        //////////////////////////////////////////////
+        // Set margin and padding with default values if not provided
+        //////////////////////////////////////////////
+        margin: margin ??
+            const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+        padding: padding ?? const EdgeInsets.all(12.0),
         decoration: BoxDecoration(
           color: isUserMessage
-              ? const Color(0xFF4BAEFF)
-              : const Color.fromARGB(179, 255, 191, 0),
+              ? const Color(0xFF4BAEFF) // User message color
+              : const Color.fromARGB(179, 255, 191, 0), // AI message color
+          //////////////////////////////////////////////
+          // Set border radius based on message type
+          //////////////////////////////////////////////
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(12.0),
             topRight: Radius.circular(12.0),
             bottomLeft: isUserMessage ? Radius.circular(12.0) : Radius.zero,
             bottomRight: isUserMessage ? Radius.zero : Radius.circular(12.0),
           ),
+          //////////////////////////////////////////////
+          // Apply shadow for subtle elevation
+          //////////////////////////////////////////////
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1), // Shadow color
+              blurRadius: 4.0, // Shadow blur effect
+              spreadRadius: 2.0, // Shadow spread effect
+            ),
+          ],
         ),
+        //////////////////////////////////////////////
+        // Constraints to make the bubble responsive
+        //////////////////////////////////////////////
         constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width *
-              0.7, // Make the bubble responsive
+          maxWidth: MediaQuery.of(context).size.width * 0.7, // Max bubble width
         ),
+        //////////////////////////////////////////////
+        // Text widget to display message content with style based on message type
+        //////////////////////////////////////////////
         child: Text(
           message,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 14.0,
-          ),
+          style: isUserMessage
+              ? userMessageStyle ??
+                  const TextStyle(
+                    color: Colors.white, // Default color for user message
+                    fontSize: 14.0,
+                  )
+              : aiMessageStyle ??
+                  const TextStyle(
+                    color: Colors.black, // Default color for AI message
+                    fontSize: 14.0,
+                  ),
         ),
       ),
     );
