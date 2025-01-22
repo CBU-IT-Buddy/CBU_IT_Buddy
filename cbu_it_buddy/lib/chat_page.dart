@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'chat_bubbles.dart';
-import 'option_card.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
-class CBUITBuddyHomePage extends StatefulWidget {
-  const CBUITBuddyHomePage({Key? key}) : super(key: key);
+class ChatPage extends StatefulWidget {
+  final String query;
+
+  const ChatPage({Key? key, required this.query}) : super(key: key);
 
   @override
-  _CBUITBuddyHomePageState createState() => _CBUITBuddyHomePageState();
+  _ChatPageState createState() => _ChatPageState();
 }
 
-class _CBUITBuddyHomePageState extends State<CBUITBuddyHomePage> {
+class _ChatPageState extends State<ChatPage> {
   List<Map<String, dynamic>> _chatMessages = [];
   String _chatMessage = "";
   final TextEditingController _textController = TextEditingController();
@@ -19,8 +20,8 @@ class _CBUITBuddyHomePageState extends State<CBUITBuddyHomePage> {
 
   Future<String> _fetchSolution(String query) async {
     final Map<String, String> fileMap = {
-      'password reset': 'password_reset.txt',
-      'mfa reset': 'mfa_reset.txt',
+      'reset password': 'password_reset.txt',
+      'reset mfa': 'mfa_reset.txt',
       'wifi problems': 'wifi_problems.txt',
     };
 
@@ -56,7 +57,7 @@ class _CBUITBuddyHomePageState extends State<CBUITBuddyHomePage> {
       });
 
       // Fetch the actual solution based on the message
-      String botResponse = await _fetchSolution(_chatMessage);
+      String botResponse = await _fetchSolution(widget.query);
 
       setState(() {
         _chatMessages.add({
@@ -65,15 +66,6 @@ class _CBUITBuddyHomePageState extends State<CBUITBuddyHomePage> {
         });
       });
     }
-  }
-
-  void _handleOptionTap(String title) {
-    setState(() {
-      _chatMessage = title;
-      _textController.text = _chatMessage;
-    });
-    _focusNode.requestFocus();
-    _handleSubmitMessage();
   }
 
   @override
@@ -86,9 +78,8 @@ class _CBUITBuddyHomePageState extends State<CBUITBuddyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: const Text("New Chat"),
+        title: const Text("Chat with IT Buddy"),
       ),
       body: Column(
         children: [
@@ -106,34 +97,6 @@ class _CBUITBuddyHomePageState extends State<CBUITBuddyHomePage> {
               },
             ),
           ),
-          if (!_hasSubmittedMessage)
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: Row(
-                  children: [
-                    const SizedBox(width: 16.0),
-                    OptionCard(
-                      title: "Reset Password",
-                      subtitle: "All Accounts",
-                      onTap: _handleOptionTap,
-                    ),
-                    OptionCard(
-                      title: "Reset MFA",
-                      subtitle: "Microsoft Authenticator, phone number",
-                      onTap: _handleOptionTap,
-                    ),
-                    OptionCard(
-                      title: "WiFi - Problems",
-                      subtitle: "CBU-SECURE, CBU...",
-                      onTap: _handleOptionTap,
-                    ),
-                    const SizedBox(width: 16.0),
-                  ],
-                ),
-              ),
-            ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(

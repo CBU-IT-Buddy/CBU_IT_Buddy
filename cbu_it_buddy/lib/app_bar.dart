@@ -4,7 +4,7 @@ import 'feedback_page.dart'; // Import the FeedbackPage
 //////////////////////////////////////////////
 // Function to build the AppBar for the app
 //////////////////////////////////////////////
-AppBar buildAppBar(BuildContext context) {  // Pass BuildContext as a parameter
+AppBar buildAppBar(BuildContext context) {
   return AppBar(
     //////////////////////////////////////////////
     // Title for the AppBar (centered)
@@ -18,12 +18,13 @@ AppBar buildAppBar(BuildContext context) {  // Pass BuildContext as a parameter
     leading: IconButton(
       icon: const Icon(Icons.menu),
       onPressed: () {
-        // Action for menu button
+        // Action for menu button: You can use a Drawer or another feature
+        Scaffold.of(context).openDrawer(); // Example of opening a Drawer
       },
     ),
 
     //////////////////////////////////////////////
-    // Actions (logo image on the right)
+    // Actions (logo image and feedback button on the right)
     //////////////////////////////////////////////
     actions: [
       Padding(
@@ -42,8 +43,9 @@ AppBar buildAppBar(BuildContext context) {  // Pass BuildContext as a parameter
                 );
               },
             ),
+            // Logo image with an asset path
             Image.asset(
-              '/Users/dartagnancalitz/CBU_IT_Buddy/cbu_it_buddy/lib/assets/images/cbu_logo.png', // Make sure the path matches your folder structure
+              'lib/assets/images/cbu_logo.png', // Relative path based on the project structure
               width: 50,
               height: 50,
               fit: BoxFit.contain,
