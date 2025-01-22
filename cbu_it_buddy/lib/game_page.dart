@@ -2,17 +2,14 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 
 class GamePage extends StatefulWidget {
-  final String username;
-
-  const GamePage({super.key, required this.username});
-
+  const GamePage({super.key});
   @override
   _GamePageState createState() => _GamePageState();
 }
 
 class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin {
   final Random _random = Random();
-  int _ringingStation = -1;
+  int _ringingStation = -1; // Initially, no station is ringing
   bool _isRinging = false;
   int _secondRingingStation = -1;
   String _question = "";
@@ -73,6 +70,7 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
       duration: const Duration(seconds: 1),
     )..repeat(reverse: true);
 
+    // Schedule the first call after a random delay
     scheduleNextRing();
   }
 
@@ -82,6 +80,7 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
     super.dispose();
   }
 
+  // Schedule the next phone ringing with a random delay
   void scheduleNextRing() {
     if (_totalRings < _maxRings && _lives > 0) {
       int delaySeconds = _random.nextInt(4) + 2; // Between 2 and 5 seconds
@@ -366,6 +365,7 @@ void _showWalkInQuestion() {
   );
 }
 
+  // End the game after 5 rings
   void _endGame() {
     String message;
     if (_lives <= 0) {
@@ -382,29 +382,21 @@ void _showWalkInQuestion() {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop();
-              _restartGame();
+              Navigator.of(context).pop(); // Close the dialog
+              _restartGame(); // Call the restart method
             },
             child: const Text("Restart Game"),
           ),
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
+              Navigator.of(context).pop(); // Close the dialog
+              Navigator.of(context).pop(); // Go back to the previous screen (main page)
             },
             child: const Text("Cancel"),
           ),
         ],
       ),
     );
-  }
-
-  void _updateLeaderboard() {
-    leaderboard.add({"username": widget.username, "xp": _xp});
-    leaderboard.sort((a, b) => b["xp"].compareTo(a["xp"]));
-    if (leaderboard.length > 3) {
-      leaderboard.removeLast();
-    }
   }
 
   void _restartGame() {
@@ -421,9 +413,10 @@ void _showWalkInQuestion() {
       _walkInTriggered = false;
       _walkInActive = false;
     });
-    Navigator.of(context).pop();
+    Navigator.of(context).pop();// close current game page that is open
+    //Navigate to fresh game page instance
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => GamePage(username: widget.username)),
+      MaterialPageRoute(builder: (context) => const GamePage()),
     );
   }
   void _startQuestionTimer() {
