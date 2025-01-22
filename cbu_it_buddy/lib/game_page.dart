@@ -1,30 +1,31 @@
 import 'package:flutter/material.dart';
-import 'hints.dart';
 import 'dart:math';
 
 class GamePage extends StatefulWidget {
-  final String username; // Added username for leaderboard feature
+  final String username;
 
-  const GamePage({super.key, required this.username}); // Modified constructor to require username
+  const GamePage({super.key, required this.username});
+
   @override
   _GamePageState createState() => _GamePageState();
 }
 
-class _GamePageState extends State<GamePage>
-    with SingleTickerProviderStateMixin {
+class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin {
   final Random _random = Random();
-  int _ringingStation = -1; 
+  int _ringingStation = -1;
   bool _isRinging = false;
   String _question = "";
   List<String> _answers = [];
   String _correctAnswer = "";
-  int _totalRings = 0; 
+  int _totalRings = 0;
   final int _maxRings = 5;
 
-  int _xp = 0; 
-  int _lives = 3; 
-  int _level = 1; 
-  static List<Map<String, dynamic>> leaderboard = []; // Leaderboard as a static list
+  int _xp = 0;
+  int _lives = 3;
+  int _level = 1;
+  int _hintCount = 3; // Defined hint counter
+
+  static List<Map<String, dynamic>> leaderboard = [];
 
   final int totalStations = 8;
   final List<String> dummyQuestions = [
@@ -64,24 +65,25 @@ class _GamePageState extends State<GamePage>
 
   void scheduleNextRing() {
     if (_totalRings < _maxRings && _lives > 0) {
-      int delaySeconds = _random.nextInt(4) + 2; 
+      int delaySeconds = _random.nextInt(4) + 2;
       Future.delayed(Duration(seconds: delaySeconds), () {
         if (mounted) {
           _ringPhone();
         }
       });
     } else {
-      _endGame(); 
+      _endGame();
     }
   }
 
   void _ringPhone() {
     setState(() {
-      _ringingStation = _random.nextInt(totalStations) + 1; 
+      _ringingStation = _random.nextInt(totalStations) + 1;
       _isRinging = true;
-      _question = dummyQuestions[_random.nextInt(dummyQuestions.length)];
-      _answers = dummyAnswers[dummyQuestions.indexOf(_question)];
-      _correctAnswer = correctAnswers[dummyQuestions.indexOf(_question)];
+      int questionIndex = _random.nextInt(dummyQuestions.length);
+      _question = dummyQuestions[questionIndex];
+      _answers = dummyAnswers[questionIndex];
+      _correctAnswer = correctAnswers[questionIndex];
       _totalRings++;
     });
   }
@@ -90,7 +92,7 @@ class _GamePageState extends State<GamePage>
     return GridView.builder(
       padding: const EdgeInsets.all(10),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 4, 
+        crossAxisCount: 4,
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,
         childAspectRatio: 1,
@@ -99,46 +101,23 @@ class _GamePageState extends State<GamePage>
       itemBuilder: (context, index) {
         int stationNumber = index + 1;
         return GestureDetector(
-          onTap: _ringingStation == stationNumber ? () => _onStationTap() : null, 
+          onTap: _ringingStation == stationNumber ? () => _onStationTap() : null,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 500),
             decoration: BoxDecoration(
-              color: _ringingStation == stationNumber
-                  ? Colors.yellow
-                  : Colors.grey[300],
+              color: _ringingStation == stationNumber ? Colors.yellow : Colors.grey[300],
               borderRadius: BorderRadius.circular(15),
               border: Border.all(color: Colors.black),
             ),
             child: Center(
               child: Text(
                 'Station $stationNumber',
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
           ),
         );
       },
-    );
-  }
-
-  Widget _buildWalkInStation() {
-    return GestureDetector(
-      onTap: () {},
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: Colors.grey[300],
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: Colors.black),
-        ),
-        child: const Center(
-          child: Text(
-            'W (Walk-in)',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-        ),
-      ),
     );
   }
 
@@ -159,29 +138,17 @@ class _GamePageState extends State<GamePage>
               );
             }).toList(),
             const SizedBox(height: 10),
-            //////////////////////////////////////////////
-            // Add the Hints button below the answer buttons
-            //////////////////////////////////////////////
             ElevatedButton(
               onPressed: _hintCount > 0
                   ? () {
-                      // Trigger the hint sequence
-                      HintManager(
-                        correctStation: _ringingStation,
-                        onHintCompleted: () {
-                          // After the hint, show the question popup again and highlight correct answer
-                          _showAnswerFeedback(true, _correctAnswer);
-                        },
-                      ).showHint(context);
                       setState(() {
-                        _hintCount--; // Decrease hint count
+                        _hintCount--;
                       });
+                      _showAnswerFeedback(true, _correctAnswer);
                     }
-                  : null, // Disable button if no hints available
+                  : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: _hintCount > 0
-                    ? Colors.blue
-                    : Colors.grey, // Grey out if no hints left
+                backgroundColor: _hintCount > 0 ? Colors.blue : Colors.grey,
               ),
               child: Text('Hint ($_hintCount left)'),
             ),
@@ -192,15 +159,15 @@ class _GamePageState extends State<GamePage>
   }
 
   void _showAnswerFeedback(bool isCorrect, String selectedAnswer) {
-    Navigator.of(context).pop(); 
+    Navigator.of(context).pop();
 
     if (isCorrect) {
       setState(() {
-        _xp += 10; 
+        _xp += 10;
       });
     } else {
       setState(() {
-        _lives--; 
+        _lives--;
       });
     }
 
@@ -213,9 +180,9 @@ class _GamePageState extends State<GamePage>
           children: _answers.map((answer) {
             return Container(
               color: answer == selectedAnswer && !isCorrect
-                  ? Colors.red 
+                  ? Colors.red
                   : answer == _correctAnswer
-                      ? Colors.green 
+                      ? Colors.green
                       : null,
               child: ListTile(
                 title: Text(answer),
@@ -226,13 +193,12 @@ class _GamePageState extends State<GamePage>
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop(); 
+              Navigator.of(context).pop();
               if (isCorrect && _xp >= 30) {
                 setState(() {
-                  _level++; 
-                  _xp = 0;  
+                  _level++;
+                  _xp = 0;
                 });
-
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
@@ -241,12 +207,12 @@ class _GamePageState extends State<GamePage>
                     actions: [
                       TextButton(
                         onPressed: () {
-                          Navigator.of(context).pop(); 
+                          Navigator.of(context).pop();
                           setState(() {
-                            _ringingStation = -1; 
-                            _isRinging = false;    
+                            _ringingStation = -1;
+                            _isRinging = false;
                           });
-                          scheduleNextRing(); 
+                          scheduleNextRing();
                         },
                         child: const Text("Continue"),
                       ),
@@ -255,10 +221,10 @@ class _GamePageState extends State<GamePage>
                 );
               } else {
                 setState(() {
-                  _ringingStation = -1; 
-                  _isRinging = false;    
+                  _ringingStation = -1;
+                  _isRinging = false;
                 });
-                scheduleNextRing(); 
+                scheduleNextRing();
               }
             },
             child: const Text("Next Call"),
@@ -271,7 +237,6 @@ class _GamePageState extends State<GamePage>
   void _endGame() {
     String message = _lives <= 0 ? "You are out of lives." : "You have completed 5 calls.";
 
-    //when game ends
     _updateLeaderboard();
 
     showDialog(
@@ -282,15 +247,15 @@ class _GamePageState extends State<GamePage>
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop(); 
-              _restartGame(); 
+              Navigator.of(context).pop();
+              _restartGame();
             },
             child: const Text("Restart Game"),
           ),
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop(); 
-              Navigator.of(context).pop(); 
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
             },
             child: const Text("Cancel"),
           ),
@@ -299,12 +264,11 @@ class _GamePageState extends State<GamePage>
     );
   }
 
-  // Function to update leaderboard
   void _updateLeaderboard() {
     leaderboard.add({"username": widget.username, "xp": _xp});
-    leaderboard.sort((a, b) => b["xp"].compareTo(a["xp"])); // Sort by highest XP
+    leaderboard.sort((a, b) => b["xp"].compareTo(a["xp"]));
     if (leaderboard.length > 3) {
-      leaderboard.removeLast(); // Keep only top 3 scores
+      leaderboard.removeLast();
     }
   }
 
@@ -328,111 +292,8 @@ class _GamePageState extends State<GamePage>
     return Scaffold(
       appBar: AppBar(
         title: const Text('IT Office Game'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _restartGame, 
-          ),
-        ],
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                const Text("Leaderboard (Top 3)"),
-                for (var i = 0; i < leaderboard.length; i++)
-                  Text("${i + 1}. ${leaderboard[i]['username']} - ${leaderboard[i]['xp']} XP"),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.flash_on, color: Colors.yellow), 
-                    const SizedBox(width: 4), 
-                    Text(
-                      'XP: $_xp',
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    const Icon(Icons.favorite, color: Colors.red), 
-                    const SizedBox(width: 4), 
-                    Text(
-                      'Lives: $_lives',
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    const Icon(Icons.star, color: Colors.blue), 
-                    const SizedBox(width: 4), 
-                    Text(
-                      'Level: $_level',
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const Text(
-            'Click the ringing station to answer the call!',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          Expanded(
-            child: _buildStations(), 
-          ),
-          const SizedBox(height: 20),
-          _buildWalkInStation(), 
-        ],
-      ),
-    );
-  }
-}
-
-class StartScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final TextEditingController usernameController = TextEditingController();
-    return Scaffold(
-      appBar: AppBar(title: const Text("Enter Username")),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: usernameController,
-                decoration: const InputDecoration(labelText: "Username"),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => GamePage(username: usernameController.text),
-                    ),
-                  );
-                },
-                child: const Text("Start Game"),
-              ),
-            ],
-          ),
-        ),
-      ),
+      body: _buildStations(),
     );
   }
 }
