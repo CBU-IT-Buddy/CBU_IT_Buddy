@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 // FAQPAGE  StatelessWidget
 //////////////////////////////////////////////
 class FAQPage extends StatelessWidget {
-  const FAQPage({Key? key}) : super(key: key);
+  const FAQPage({super.key});
 
   @override
   Widget build(BuildContext context) {

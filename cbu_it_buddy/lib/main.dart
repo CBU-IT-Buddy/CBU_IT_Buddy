@@ -43,9 +43,6 @@ class MainPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('CBU IT Buddy'),
       ),
-      //////////////////////////////////////////////
-      // Navigation Drawer Code !!!!!!
-      //////////////////////////////////////////////
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -63,7 +60,6 @@ class MainPage extends StatelessWidget {
               leading: const Icon(Icons.chat),
               title: const Text('New Chat'),
               onTap: () {
-                // Navigate to New Chat (Home) page
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -75,7 +71,6 @@ class MainPage extends StatelessWidget {
               leading: const Icon(Icons.question_answer),
               title: const Text('Frequently Asked Q&A'),
               onTap: () {
-                // Navigate to FAQ Page
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const FAQPage()),
@@ -86,7 +81,6 @@ class MainPage extends StatelessWidget {
               leading: const Icon(Icons.contacts),
               title: const Text('CBU Departments Contact'),
               onTap: () {
-                // Navigate to Departments Contact Page
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -98,7 +92,6 @@ class MainPage extends StatelessWidget {
               leading: const Icon(Icons.feedback),
               title: const Text('Feedback for IT-Buddy'),
               onTap: () {
-                // Navigate to Feedback Page
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -110,11 +103,8 @@ class MainPage extends StatelessWidget {
               leading: const Icon(Icons.videogame_asset),
               title: const Text('IT Office Game'),
               onTap: () {
-                // Navigate to the IT Office Game page
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => GamePage()),
-                );
+                // Before the game
+                _showUsernameDialog(context);
               },
             ),
           ],
@@ -123,6 +113,42 @@ class MainPage extends StatelessWidget {
       body: const Center(
         child: Text('Select an option from the Navigation Drawer.'),
       ),
+    );
+  }
+
+  void _showUsernameDialog(BuildContext context) {
+    TextEditingController usernameController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Enter Username'),
+          content: TextField(
+            controller: usernameController,
+            decoration: const InputDecoration(
+              hintText: 'Username',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                String username = usernameController.text;
+                if (username.isNotEmpty) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => GamePage(username: username),
+                    ),
+                  );
+                }
+              },
+              child: const Text('Start Game'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
