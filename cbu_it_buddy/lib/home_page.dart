@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'chat_bubbles.dart';
 import 'option_card.dart';
-import 'package:flutter/services.dart' show rootBundle;
+import 'helpers/chatbot_helper.dart'; // Import ChatbotHelper for Firestore integration
 
 class CBUITBuddyHomePage extends StatefulWidget {
   const CBUITBuddyHomePage({Key? key}) : super(key: key);
@@ -11,37 +11,13 @@ class CBUITBuddyHomePage extends StatefulWidget {
 }
 
 class _CBUITBuddyHomePageState extends State<CBUITBuddyHomePage> {
+  final ChatbotHelper _chatbotHelper =
+      ChatbotHelper(); // Firestore helper instance
   List<Map<String, dynamic>> _chatMessages = [];
   String _chatMessage = "";
   final TextEditingController _textController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   bool _hasSubmittedMessage = false;
-
-  Future<String> _fetchSolution(String query) async {
-    final Map<String, String> fileMap = {
-      'password reset': 'password_reset.txt',
-      'mfa reset': 'mfa_reset.txt',
-      'wifi problems': 'wifi_problems.txt',
-    };
-
-    String? fileName;
-    fileMap.forEach((keyword, fName) {
-      if (query.toLowerCase().contains(keyword.toLowerCase())) {
-        fileName = fName;
-      }
-    });
-
-    if (fileName == null) {
-      return 'Sorry, I could not find a solution for that query.';
-    }
-
-    try {
-      String content = await rootBundle.loadString('lib/solution/$fileName');
-      return content;
-    } catch (e) {
-      return 'Error loading solution file.';
-    }
-  }
 
   void _handleSubmitMessage() async {
     if (_chatMessage.isNotEmpty) {
@@ -55,8 +31,8 @@ class _CBUITBuddyHomePageState extends State<CBUITBuddyHomePage> {
         _hasSubmittedMessage = true;
       });
 
-      // Fetch the actual solution based on the message
-      String botResponse = await _fetchSolution(_chatMessage);
+      // Fetch the bot's response using Firestore
+      String botResponse = await _chatbotHelper.getAnswer(_chatMessage);
 
       setState(() {
         _chatMessages.add({

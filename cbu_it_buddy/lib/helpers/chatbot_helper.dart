@@ -1,43 +1,53 @@
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-////////////////////////////////////////////////////
-// Helper Class for Chatbot - Manages Keyword-based
-// Answer Retrieval from Text Files in `solution`
-////////////////////////////////////////////////////
 class ChatbotHelper {
-  // Map of keywords to corresponding file paths
-  final Map<String, String> keywordToFile = {
-    'password reset': 'lib/solution/password_reset.txt',
-    'wifi connection': 'lib/solution/wifi_connection.txt',
-    // Additional mappings go here
-  };
+  // Firestore instance
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   ////////////////////////////////////////////////
-  // Fetch answer based on keyword match in query
+  // Get answer from Firestore
   ////////////////////////////////////////////////
   Future<String> getAnswer(String question) async {
-    // Iterate through keyword-file mappings
-    for (var entry in keywordToFile.entries) {
-      if (question.toLowerCase().contains(entry.key.toLowerCase())) {
-        // Load and return content of matched file
-        return await _loadTextFile(entry.value);
+    try {
+      // Normalize the question to lowercase
+      String normalizedQuestion = question.toLowerCase();
+
+      // Query the Firestore `solutions` collection
+      QuerySnapshot querySnapshot =
+          await _firestore.collection('solutions').get();
+
+      // Iterate through documents to find a keyword match in titles
+      for (var doc in querySnapshot.docs) {
+        String title = doc['title']?.toString().toLowerCase() ?? '';
+        if (normalizedQuestion.contains(title)) {
+          // Found a match - prepare the response
+          String content = doc['content'] ?? 'No content available.';
+          String link = doc['link'] ?? '';
+          return _formatResponse(title, content, link);
+        }
       }
+
+      // Default response if no match is found
+      return 'Sorry, I don’t have an answer for that question.';
+    } catch (e, stackTrace) {
+      print('Error fetching solution: $e');
+      print(stackTrace);
+      return 'An error occurred while retrieving the solution. Please try again later.';
     }
-    // Default response if no keyword is matched
-    return 'Sorry, I don’t have an answer for that question.';
   }
 
-  //////////////////////////////////////
-  // Load text file from assets folder
-  //////////////////////////////////////
-  Future<String> _loadTextFile(String filePath) async {
-    try {
-      // Read the content of the file specified
-      final content = await rootBundle.loadString(filePath);
-      return content;
-    } catch (e) {
-      // Error response if file cannot be read
-      return 'Sorry, I could not retrieve the answer. Please try again later.';
+  ////////////////////////////////////////
+  // Format the chatbot response
+  ////////////////////////////////////////
+  String _formatResponse(String title, String content, String link) {
+    StringBuffer responseBuffer = StringBuffer();
+    responseBuffer.writeln('**$title**\n');
+    responseBuffer.writeln(content);
+
+    if (link.isNotEmpty) {
+      responseBuffer.writeln('\n[View Full Solution]($link)');
     }
+
+    return responseBuffer.toString();
   }
 }

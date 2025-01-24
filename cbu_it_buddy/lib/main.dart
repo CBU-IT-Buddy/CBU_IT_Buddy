@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'app_bar.dart'; // Custom AppBar file import
 import 'home_page.dart'; // HomePage file import (New Chat)
 import 'feedback_page.dart'; // Feedback Page
@@ -9,8 +11,12 @@ import 'game_page.dart'; // IT Office Game page import
 //////////////////////////////////////////////
 // Main function to run the app
 //////////////////////////////////////////////
-void main() {
-  runApp(const CBUITBuddyApp()); // Entry point of the app
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(CBUITBuddyApp());
 }
 
 //////////////////////////////////////////////
@@ -101,8 +107,7 @@ class MainPage extends StatelessWidget {
                 // Navigate to Feedback Page
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => const FeedbackPage()),
+                  MaterialPageRoute(builder: (context) => const FeedbackPage()),
                 );
               },
             ),

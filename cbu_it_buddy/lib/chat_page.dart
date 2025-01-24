@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'chat_bubbles.dart';
-import 'package:flutter/services.dart' show rootBundle;
+import 'helpers/chatbot_helper.dart'; // Import the helper class
 
 class ChatPage extends StatefulWidget {
   final String query;
@@ -12,37 +12,11 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  final ChatbotHelper _chatbotHelper = ChatbotHelper(); // Helper instance
   List<Map<String, dynamic>> _chatMessages = [];
   String _chatMessage = "";
   final TextEditingController _textController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-  bool _hasSubmittedMessage = false;
-
-  Future<String> _fetchSolution(String query) async {
-    final Map<String, String> fileMap = {
-      'reset password': 'password_reset.txt',
-      'reset mfa': 'mfa_reset.txt',
-      'wifi problems': 'wifi_problems.txt',
-    };
-
-    String? fileName;
-    fileMap.forEach((keyword, fName) {
-      if (query.toLowerCase().contains(keyword.toLowerCase())) {
-        fileName = fName;
-      }
-    });
-
-    if (fileName == null) {
-      return 'Sorry, I could not find a solution for that query.';
-    }
-
-    try {
-      String content = await rootBundle.loadString('lib/solution/$fileName');
-      return content;
-    } catch (e) {
-      return 'Error loading solution file.';
-    }
-  }
 
   void _handleSubmitMessage() async {
     if (_chatMessage.isNotEmpty) {
@@ -53,11 +27,10 @@ class _ChatPageState extends State<ChatPage> {
         });
         _chatMessage = "";
         _textController.clear();
-        _hasSubmittedMessage = true;
       });
 
-      // Fetch the actual solution based on the message
-      String botResponse = await _fetchSolution(widget.query);
+      // Fetch the bot's response using the helper
+      String botResponse = await _chatbotHelper.getAnswer(_chatMessage);
 
       setState(() {
         _chatMessages.add({
