@@ -12,25 +12,39 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  final ChatbotHelper _chatbotHelper = ChatbotHelper(); // Helper instance
+  final ChatbotHelper _chatbotHelper = ChatbotHelper();
   List<Map<String, dynamic>> _chatMessages = [];
   String _chatMessage = "";
   final TextEditingController _textController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
+  bool _hasSubmittedMessage = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Ensure the _chatMessage is updated when the text field changes
+    _textController.addListener(() {
+      setState(() {
+        _chatMessage =
+            _textController.text; // Update _chatMessage as the user types
+      });
+    });
+  }
 
   void _handleSubmitMessage() async {
+    print("Sending Question: $_chatMessage"); // Debug print
     if (_chatMessage.isNotEmpty) {
       setState(() {
         _chatMessages.add({
           "message": _chatMessage,
           "isUserMessage": true,
         });
-        _chatMessage = "";
-        _textController.clear();
+        _hasSubmittedMessage = true;
       });
 
-      // Fetch the bot's response using the helper
       String botResponse = await _chatbotHelper.getAnswer(_chatMessage);
+
+      print("Bot Response: $botResponse"); // Debug print
 
       setState(() {
         _chatMessages.add({
@@ -38,7 +52,23 @@ class _ChatPageState extends State<ChatPage> {
           "isUserMessage": false,
         });
       });
+
+      setState(() {
+        _chatMessage = "";
+        _textController.clear();
+      });
     }
+  }
+
+  Future<void> _getBotResponse(String question) async {
+    String botResponse = await _chatbotHelper.getAnswer(question);
+
+    setState(() {
+      _chatMessages.add({
+        "message": botResponse,
+        "isUserMessage": false,
+      });
+    });
   }
 
   @override
@@ -70,6 +100,23 @@ class _ChatPageState extends State<ChatPage> {
               },
             ),
           ),
+          if (!_hasSubmittedMessage)
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                child: Row(
+                  children: [
+                    const SizedBox(width: 16.0),
+                    _optionCard("Reset Password", "All Accounts"),
+                    _optionCard(
+                        "Reset MFA", "Microsoft Authenticator, phone number"),
+                    _optionCard("WiFi - Problems", "CBU-SECURE, CBU..."),
+                    const SizedBox(width: 16.0),
+                  ],
+                ),
+              ),
+            ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
@@ -103,6 +150,35 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _optionCard(String title, String subtitle) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _chatMessage = title;
+          _textController.text = _chatMessage;
+        });
+        _focusNode.requestFocus();
+        _handleSubmitMessage(); // Submit the message after it's set
+      },
+      child: Card(
+        elevation: 5,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text(subtitle),
+            ],
+          ),
+        ),
       ),
     );
   }

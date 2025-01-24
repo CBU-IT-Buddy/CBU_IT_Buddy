@@ -9,26 +9,31 @@ class ChatbotHelper {
   ////////////////////////////////////////////////
   Future<String> getAnswer(String question) async {
     try {
-      // Normalize the question to lowercase
       String normalizedQuestion = question.toLowerCase();
 
-      // Query the Firestore `solutions` collection
+      // Query Firestore for all solutions
       QuerySnapshot querySnapshot =
           await _firestore.collection('solutions').get();
 
-      // Iterate through documents to find a keyword match in titles
+      // Iterate through the documents to find a match
       for (var doc in querySnapshot.docs) {
         String title = doc['title']?.toString().toLowerCase() ?? '';
-        if (normalizedQuestion.contains(title)) {
-          // Found a match - prepare the response
+        print(
+            'Comparing Question: "$normalizedQuestion" with Title: "$title"'); // Debug print
+
+        // Match keywords in title using regex
+        // Allow better matching by considering individual words in the question
+        RegExp regExp = RegExp(r'\b(?:' + _buildRegexPattern(title) + r')\b',
+            caseSensitive: false);
+
+        if (regExp.hasMatch(normalizedQuestion)) {
           String content = doc['content'] ?? 'No content available.';
           String link = doc['link'] ?? '';
           return _formatResponse(title, content, link);
         }
       }
 
-      // Default response if no match is found
-      return 'Sorry, I don’t have an answer for that question.';
+      return "Sorry, I don't have an answer for that question. Please try asking in a different way.";
     } catch (e, stackTrace) {
       print('Error fetching solution: $e');
       print(stackTrace);
@@ -49,5 +54,17 @@ class ChatbotHelper {
     }
 
     return responseBuffer.toString();
+  }
+
+  ////////////////////////////////////////
+  // Build regex pattern from title words
+  ////////////////////////////////////////
+  String _buildRegexPattern(String title) {
+    // Remove common words and split by space, then join with '|'
+    List<String> titleWords = title.split(' ').where((word) {
+      return word.length > 3; // Filter out short words (like "the", "and")
+    }).toList();
+
+    return titleWords.join(r'\b|\b'); // Join words to form the regex pattern
   }
 }

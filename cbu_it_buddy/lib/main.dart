@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'app_bar.dart'; // Custom AppBar file import
-import 'home_page.dart'; // HomePage file import (New Chat)
+//import 'home_page.dart'; // HomePage file import (New Chat)
 import 'feedback_page.dart'; // Feedback Page
 import 'faq_page.dart'; // Frequently Asked Q&A Page
 import 'departments_contact_page.dart'; // CBU Departments Contact Page
 import 'game_page.dart'; // IT Office Game page import
+import 'chat_page.dart'; // Import the new ChatPage
 
 //////////////////////////////////////////////
 // Main function to run the app
@@ -69,11 +70,13 @@ class MainPage extends StatelessWidget {
               leading: const Icon(Icons.chat),
               title: const Text('New Chat'),
               onTap: () {
-                // Navigate to New Chat (Home) page
+                // Navigate to New Chat (ChatPage) instead of the old HomePage
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const CBUITBuddyHomePage()),
+                    builder: (context) => const ChatPage(
+                        query: 'Reset Password'), // Example query
+                  ),
                 );
               },
             ),
