@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
-import 'app_bar.dart'; // Custom AppBar file import
+import 'services/firebase_options.dart';
+import 'widgets/app_bar.dart'; // Custom AppBar file import
 //import 'home_page.dart'; // HomePage file import (New Chat)
-import 'feedback_page.dart'; // Feedback Page
-import 'faq_page.dart'; // Frequently Asked Q&A Page
-import 'departments_contact_page.dart'; // CBU Departments Contact Page
-import 'game_page.dart'; // IT Office Game page import
-import 'chat_page.dart'; // Import the new ChatPage
+import 'services/feedback_page.dart'; // Feedback Page
+import 'screens/faq_page.dart'; // Frequently Asked Q&A Page
+import 'screens/departments_contact_page.dart'; // CBU Departments Contact Page
+import 'screens/game_page.dart'; // IT Office Game page import
+import 'screens/chat_page.dart'; // Import the new ChatPage
 
 //////////////////////////////////////////////
 // Main function to run the app

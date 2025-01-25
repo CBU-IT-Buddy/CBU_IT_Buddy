@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'chat_bubbles.dart';
-import 'helpers/chatbot_helper.dart';
-import 'services/bible_service.dart';
-import 'widgets/option_card.dart';
+import '../widgets/chat_bubbles.dart';
+import '../helpers/chatbot_helper.dart';
+import '../services/bible_service.dart';
+import '../widgets/option_card.dart';
 
 class ChatPage extends StatefulWidget {
   final String query;
