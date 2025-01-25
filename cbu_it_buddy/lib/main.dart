@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
-import 'app_bar.dart'; // Custom AppBar file import
-import 'home_page.dart'; // HomePage file import (New Chat)
-import 'feedback_page.dart'; // Feedback Page
-import 'faq_page.dart'; // Frequently Asked Q&A Page
-import 'departments_contact_page.dart'; // CBU Departments Contact Page
-import 'game_page.dart'; // IT Office Game page import
+import 'package:firebase_core/firebase_core.dart';
+import 'services/firebase_options.dart';
+import 'widgets/app_bar.dart'; // Custom AppBar file import
+//import 'home_page.dart'; // HomePage file import (New Chat)
+import 'services/feedback_page.dart'; // Feedback Page
+import 'screens/faq_page.dart'; // Frequently Asked Q&A Page
+import 'screens/departments_contact_page.dart'; // CBU Departments Contact Page
+import 'screens/game_page.dart'; // IT Office Game page import
+import 'screens/chat_page.dart'; // Import the new ChatPage
 
 //////////////////////////////////////////////
 // Main function to run the app
 //////////////////////////////////////////////
-void main() {
-  runApp(const CBUITBuddyApp()); // Entry point of the app
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(CBUITBuddyApp());
 }
 
 //////////////////////////////////////////////
@@ -63,11 +70,13 @@ class MainPage extends StatelessWidget {
               leading: const Icon(Icons.chat),
               title: const Text('New Chat'),
               onTap: () {
-                // Navigate to New Chat (Home) page
+                // Navigate to New Chat (ChatPage) instead of the old HomePage
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const CBUITBuddyHomePage()),
+                    builder: (context) => const ChatPage(
+                        query: 'Reset Password'), // Example query
+                  ),
                 );
               },
             ),
@@ -101,8 +110,7 @@ class MainPage extends StatelessWidget {
                 // Navigate to Feedback Page
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => const FeedbackPage()),
+                  MaterialPageRoute(builder: (context) => const FeedbackPage()),
                 );
               },
             ),

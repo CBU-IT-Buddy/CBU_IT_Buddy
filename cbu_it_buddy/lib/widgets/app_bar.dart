@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'feedback_page.dart'; // Import the FeedbackPage
+import '../services/feedback_page.dart'; // Import the FeedbackPage
 
 //////////////////////////////////////////////
 // Function to build the AppBar for the app

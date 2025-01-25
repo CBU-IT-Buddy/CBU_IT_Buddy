@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'chat_bubbles.dart';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../widgets/chat_bubbles.dart';
+import '../helpers/chatbot_helper.dart';
+import '../services/bible_service.dart';
+import '../widgets/option_card.dart';
 
 class ChatPage extends StatefulWidget {
   final String query;
@@ -12,58 +15,39 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  List<Map<String, dynamic>> _chatMessages = [];
-  String _chatMessage = "";
+  final ChatbotHelper _chatbotHelper = ChatbotHelper();
+  final List<Map<String, dynamic>> _chatMessages = [];
   final TextEditingController _textController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   bool _hasSubmittedMessage = false;
 
-  Future<String> _fetchSolution(String query) async {
-    final Map<String, String> fileMap = {
-      'reset password': 'password_reset.txt',
-      'reset mfa': 'mfa_reset.txt',
-      'wifi problems': 'wifi_problems.txt',
-    };
+  @override
+  void initState() {
+    super.initState();
+    _fetchBibleVerse(); // Fetch the Bible verse when the page loads
+  }
 
-    String? fileName;
-    fileMap.forEach((keyword, fName) {
-      if (query.toLowerCase().contains(keyword.toLowerCase())) {
-        fileName = fName;
-      }
+  Future<void> _fetchBibleVerse() async {
+    String verse = await BibleService().fetchBibleVerse();
+    setState(() {
+      _chatMessages.add({"message": verse, "isUserMessage": false});
     });
-
-    if (fileName == null) {
-      return 'Sorry, I could not find a solution for that query.';
-    }
-
-    try {
-      String content = await rootBundle.loadString('lib/solution/$fileName');
-      return content;
-    } catch (e) {
-      return 'Error loading solution file.';
-    }
   }
 
   void _handleSubmitMessage() async {
-    if (_chatMessage.isNotEmpty) {
+    if (_textController.text.isNotEmpty) {
+      final String userMessage = _textController.text;
+
       setState(() {
-        _chatMessages.add({
-          "message": _chatMessage,
-          "isUserMessage": true,
-        });
-        _chatMessage = "";
-        _textController.clear();
+        _chatMessages.add({"message": userMessage, "isUserMessage": true});
         _hasSubmittedMessage = true;
       });
 
-      // Fetch the actual solution based on the message
-      String botResponse = await _fetchSolution(widget.query);
+      String botResponse = await _chatbotHelper.getAnswer(userMessage);
 
       setState(() {
-        _chatMessages.add({
-          "message": botResponse,
-          "isUserMessage": false,
-        });
+        _chatMessages.add({"message": botResponse, "isUserMessage": false});
+        _textController.clear();
       });
     }
   }
@@ -97,6 +81,34 @@ class _ChatPageState extends State<ChatPage> {
               },
             ),
           ),
+          if (!_hasSubmittedMessage)
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                child: Row(
+                  children: [
+                    const SizedBox(width: 16.0),
+                    OptionCard(
+                      title: "Reset Password",
+                      subtitle: "All Accounts",
+                      onTap: () => _submitQuickMessage("Reset Password"),
+                    ),
+                    OptionCard(
+                      title: "Reset MFA",
+                      subtitle: "Microsoft Authenticator, phone number",
+                      onTap: () => _submitQuickMessage("Reset MFA"),
+                    ),
+                    OptionCard(
+                      title: "WiFi - Problems",
+                      subtitle: "CBU-SECURE, CBU...",
+                      onTap: () => _submitQuickMessage("WiFi - Problems"),
+                    ),
+                    const SizedBox(width: 16.0),
+                  ],
+                ),
+              ),
+            ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
@@ -113,11 +125,6 @@ class _ChatPageState extends State<ChatPage> {
                       contentPadding:
                           const EdgeInsets.symmetric(horizontal: 16.0),
                     ),
-                    onChanged: (value) {
-                      setState(() {
-                        _chatMessage = value;
-                      });
-                    },
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -132,5 +139,12 @@ class _ChatPageState extends State<ChatPage> {
         ],
       ),
     );
+  }
+
+  void _submitQuickMessage(String message) {
+    setState(() {
+      _textController.text = message;
+    });
+    _handleSubmitMessage();
   }
 }
