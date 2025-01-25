@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'chat_bubbles.dart';
 import 'helpers/chatbot_helper.dart'; // Import the helper class
 
@@ -13,6 +14,8 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final ChatbotHelper _chatbotHelper = ChatbotHelper();
+  final FirebaseFirestore _firestore =
+      FirebaseFirestore.instance; // Firestore instance
   List<Map<String, dynamic>> _chatMessages = [];
   String _chatMessage = "";
   final TextEditingController _textController = TextEditingController();
@@ -22,13 +25,46 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    // Ensure the _chatMessage is updated when the text field changes
     _textController.addListener(() {
       setState(() {
         _chatMessage =
             _textController.text; // Update _chatMessage as the user types
       });
     });
+    _fetchBibleVerse(); // Fetch the Bible verse when the page loads
+  }
+
+  Future<void> _fetchBibleVerse() async {
+    try {
+      // Fetch a random Bible verse from Firestore
+      final QuerySnapshot querySnapshot =
+          await _firestore.collection('bibleverse').get();
+      if (querySnapshot.docs.isNotEmpty) {
+        final randomVerse = querySnapshot.docs.first; // Select the first verse
+        final verseText = randomVerse['verse'] ??
+            'No verse available'; // Ensure there's a fallback
+        setState(() {
+          _chatMessages.add({
+            "message": verseText,
+            "isUserMessage": false,
+          });
+        });
+      } else {
+        setState(() {
+          _chatMessages.add({
+            "message": "No Bible verses available at the moment.",
+            "isUserMessage": false,
+          });
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _chatMessages.add({
+          "message": "Error fetching Bible verse: $e",
+          "isUserMessage": false,
+        });
+      });
+    }
   }
 
   void _handleSubmitMessage() async {
