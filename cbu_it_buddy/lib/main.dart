@@ -67,10 +67,14 @@ class _MainPageState extends State<MainPage> {
           children: <Widget>[
             const DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
+                  color: Color.fromARGB(
+                255,
+                16,
+                92,
+                191,
+              )),
               child: Text(
-                'User Selection',
+                'Menu',
                 style: TextStyle(color: Colors.white, fontSize: 24),
               ),
             ),
