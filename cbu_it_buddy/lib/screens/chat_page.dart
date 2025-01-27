@@ -1,79 +1,69 @@
+import 'dart:async'; // Import Timer
 import 'package:flutter/material.dart';
-import 'chat_bubbles.dart';
-import 'option_card.dart';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../widgets/chat_bubbles.dart';
+import '../helpers/chatbot_helper.dart';
+import '../services/bible_service.dart';
+import '../widgets/option_card.dart';
 
-class CBUITBuddyHomePage extends StatefulWidget {
-  const CBUITBuddyHomePage({Key? key}) : super(key: key);
+class ChatPage extends StatefulWidget {
+  final String query;
+
+  const ChatPage({Key? key, required this.query}) : super(key: key);
 
   @override
-  _CBUITBuddyHomePageState createState() => _CBUITBuddyHomePageState();
+  _ChatPageState createState() => _ChatPageState();
 }
 
-class _CBUITBuddyHomePageState extends State<CBUITBuddyHomePage> {
-  List<Map<String, dynamic>> _chatMessages = [];
-  String _chatMessage = "";
+class _ChatPageState extends State<ChatPage> {
+  final ChatbotHelper _chatbotHelper = ChatbotHelper();
+  final List<Map<String, dynamic>> _chatMessages = [];
   final TextEditingController _textController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   bool _hasSubmittedMessage = false;
 
-  Future<String> _fetchSolution(String query) async {
-    final Map<String, String> fileMap = {
-      'password reset': 'password_reset.txt',
-      'mfa reset': 'mfa_reset.txt',
-      'wifi problems': 'wifi_problems.txt',
-    };
+  @override
+  void initState() {
+    super.initState();
+    _fetchBibleVerse(); // Fetch the Bible verse when the page loads
+  }
 
-    String? fileName;
-    fileMap.forEach((keyword, fName) {
-      if (query.toLowerCase().contains(keyword.toLowerCase())) {
-        fileName = fName;
-      }
+  Future<void> _fetchBibleVerse() async {
+    String verse = await BibleService().fetchBibleVerse();
+
+    // Display the first message with the Bible verse
+    setState(() {
+      _chatMessages
+          .add({"message": "Hi Lancer!\n\n'$verse'", "isUserMessage": false});
     });
 
-    if (fileName == null) {
-      return 'Sorry, I could not find a solution for that query.';
-    }
-
-    try {
-      String content = await rootBundle.loadString('lib/solution/$fileName');
-      return content;
-    } catch (e) {
-      return 'Error loading solution file.';
-    }
+    // Add a 2-second delay for the follow-up message
+    Timer(const Duration(seconds: 2), () {
+      setState(() {
+        _chatMessages.add({
+          "message": "Is there anything I can help you with today?",
+          "isUserMessage": false
+        });
+      });
+    });
   }
 
   void _handleSubmitMessage() async {
-    if (_chatMessage.isNotEmpty) {
+    if (_textController.text.isNotEmpty) {
+      final String userMessage = _textController.text;
+
       setState(() {
-        _chatMessages.add({
-          "message": _chatMessage,
-          "isUserMessage": true,
-        });
-        _chatMessage = "";
-        _textController.clear();
+        _chatMessages.add({"message": userMessage, "isUserMessage": true});
         _hasSubmittedMessage = true;
       });
 
-      // Fetch the actual solution based on the message
-      String botResponse = await _fetchSolution(_chatMessage);
+      String botResponse = await _chatbotHelper.getAnswer(userMessage);
 
       setState(() {
-        _chatMessages.add({
-          "message": botResponse,
-          "isUserMessage": false,
-        });
+        _chatMessages.add({"message": botResponse, "isUserMessage": false});
+        _textController.clear();
       });
     }
-  }
-
-  void _handleOptionTap(String title) {
-    setState(() {
-      _chatMessage = title;
-      _textController.text = _chatMessage;
-    });
-    _focusNode.requestFocus();
-    _handleSubmitMessage();
   }
 
   @override
@@ -86,9 +76,8 @@ class _CBUITBuddyHomePageState extends State<CBUITBuddyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: const Text("New Chat"),
+        title: const Text("IT-Buddy"),
       ),
       body: Column(
         children: [
@@ -110,24 +99,24 @@ class _CBUITBuddyHomePageState extends State<CBUITBuddyHomePage> {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                padding: const EdgeInsets.symmetric(vertical: 6.0),
                 child: Row(
                   children: [
                     const SizedBox(width: 16.0),
                     OptionCard(
                       title: "Reset Password",
                       subtitle: "All Accounts",
-                      onTap: _handleOptionTap,
+                      onTap: () => _submitQuickMessage("Reset Password"),
                     ),
                     OptionCard(
                       title: "Reset MFA",
                       subtitle: "Microsoft Authenticator, phone number",
-                      onTap: _handleOptionTap,
+                      onTap: () => _submitQuickMessage("Reset MFA"),
                     ),
                     OptionCard(
                       title: "WiFi - Problems",
                       subtitle: "CBU-SECURE, CBU...",
-                      onTap: _handleOptionTap,
+                      onTap: () => _submitQuickMessage("WiFi - Problems"),
                     ),
                     const SizedBox(width: 16.0),
                   ],
@@ -143,18 +132,13 @@ class _CBUITBuddyHomePageState extends State<CBUITBuddyHomePage> {
                     focusNode: _focusNode,
                     controller: _textController,
                     decoration: InputDecoration(
-                      hintText: "Type your message...",
+                      hintText: "Enter a prompt here...",
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
                       contentPadding:
                           const EdgeInsets.symmetric(horizontal: 16.0),
                     ),
-                    onChanged: (value) {
-                      setState(() {
-                        _chatMessage = value;
-                      });
-                    },
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -169,5 +153,12 @@ class _CBUITBuddyHomePageState extends State<CBUITBuddyHomePage> {
         ],
       ),
     );
+  }
+
+  void _submitQuickMessage(String message) {
+    setState(() {
+      _textController.text = message;
+    });
+    _handleSubmitMessage();
   }
 }

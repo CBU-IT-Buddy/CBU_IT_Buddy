@@ -51,11 +51,14 @@ PODS:
   - GoogleUtilities/UserDefaults (8.0.2):
     - GoogleUtilities/Logger
     - GoogleUtilities/Privacy
+  - url_launcher_ios (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - Flutter (from `Flutter`)
   - GoogleUtilities
+  - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
 SPEC REPOS:
   trunk:
@@ -69,6 +72,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_core/ios"
   Flutter:
     :path: Flutter
+  url_launcher_ios:
+    :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
   Firebase: 9f574c08c2396885b5e7e100ed4293d956218af9
@@ -77,6 +82,7 @@ SPEC CHECKSUMS:
   FirebaseCoreInternal: 0c569513412da9f3b31bd0b340013bbee8f295c5
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   GoogleUtilities: 26a3abef001b6533cf678d3eb38fd3f614b7872d
+  url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
 
 PODFILE CHECKSUM: d7199f8d756bfa2f5fdab55015bbfdf661ab254a
 
