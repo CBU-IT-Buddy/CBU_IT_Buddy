@@ -22,7 +22,7 @@ class OptionCard extends StatelessWidget {
         child: Card(
           elevation: 5, // Slight elevation for better visibility
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10), // Rounded corners
+            borderRadius: BorderRadius.circular(30), // Rounded corners
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(
@@ -44,7 +44,7 @@ class OptionCard extends StatelessWidget {
                   ),
                   overflow: TextOverflow.visible, // Prevents text wrapping
                 ),
-                const SizedBox(height: 5),
+                const SizedBox(height: 2),
                 // Subtitle Text
                 Text(
                   subtitle,

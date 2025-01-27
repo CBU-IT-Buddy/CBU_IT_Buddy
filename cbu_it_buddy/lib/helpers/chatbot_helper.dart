@@ -46,14 +46,15 @@ class ChatbotHelper {
   ////////////////////////////////////////
   String _formatResponse(String title, String content, String link) {
     StringBuffer responseBuffer = StringBuffer();
-    responseBuffer.writeln('**$title**\n');
+    responseBuffer.writeln('$title\n');
     responseBuffer.writeln(content);
 
+    // If link is available, add a Markdown-style hyperlink
     if (link.isNotEmpty) {
       responseBuffer.writeln('\n[View Full Solution]($link)');
     }
 
-    return responseBuffer.toString();
+    return responseBuffer.toString(); // Markdown string for rendering
   }
 
   ////////////////////////////////////////
