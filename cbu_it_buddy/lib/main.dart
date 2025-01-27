@@ -41,15 +41,23 @@ class CBUITBuddyApp extends StatelessWidget {
 //////////////////////////////////////////////
 // Main Page with Navigation Drawer
 //////////////////////////////////////////////
-class MainPage extends StatelessWidget {
+class MainPage extends StatefulWidget {
   const MainPage({super.key});
+
+  @override
+  _MainPageState createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  // Track the currently selected page
+  Widget _selectedPage = const ChatPage(query: 'Reset Password');
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('CBU IT Buddy'),
-      ),
+          // title: const Text('CBU IT Buddy'),
+          ),
       //////////////////////////////////////////////
       // Navigation Drawer Code !!!!!!
       //////////////////////////////////////////////
@@ -70,67 +78,59 @@ class MainPage extends StatelessWidget {
               leading: const Icon(Icons.chat),
               title: const Text('New Chat'),
               onTap: () {
-                // Navigate to New Chat (ChatPage) instead of the old HomePage
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ChatPage(
-                        query: 'Reset Password'), // Example query
-                  ),
-                );
+                setState(() {
+                  _selectedPage = const ChatPage(query: 'Reset Password');
+                });
+                Navigator.pop(context); // Close the drawer
               },
             ),
             ListTile(
               leading: const Icon(Icons.question_answer),
               title: const Text('Frequently Asked Q&A'),
               onTap: () {
-                // Navigate to FAQ Page
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const FAQPage()),
-                );
+                setState(() {
+                  _selectedPage = const FAQPage();
+                });
+                Navigator.pop(context); // Close the drawer
               },
             ),
             ListTile(
               leading: const Icon(Icons.contacts),
               title: const Text('CBU Departments Contact'),
               onTap: () {
-                // Navigate to Departments Contact Page
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const DepartmentsContactPage()),
-                );
+                setState(() {
+                  _selectedPage = const DepartmentsContactPage();
+                });
+                Navigator.pop(context); // Close the drawer
               },
             ),
             ListTile(
               leading: const Icon(Icons.feedback),
               title: const Text('Feedback for IT-Buddy'),
               onTap: () {
-                // Navigate to Feedback Page
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const FeedbackPage()),
-                );
+                setState(() {
+                  _selectedPage = const FeedbackPage();
+                });
+                Navigator.pop(context); // Close the drawer
               },
             ),
             ListTile(
               leading: const Icon(Icons.videogame_asset),
               title: const Text('IT Office Game'),
               onTap: () {
-                // Navigate to the IT Office Game page
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const GamePage()),
-                );
+                setState(() {
+                  _selectedPage = const GamePage();
+                });
+                Navigator.pop(context); // Close the drawer
               },
             ),
           ],
         ),
       ),
-      body: const Center(
-        child: Text('Select an option from the Navigation Drawer.'),
-      ),
+      //////////////////////////////////////////////
+      // Set the Selected Page as the Body !!!!!!
+      //////////////////////////////////////////////
+      body: _selectedPage,
     );
   }
 }

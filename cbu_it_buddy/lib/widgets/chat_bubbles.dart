@@ -40,16 +40,16 @@ class ChatBubble extends StatelessWidget {
         padding: padding ?? const EdgeInsets.all(12.0),
         decoration: BoxDecoration(
           color: isUserMessage
-              ? const Color(0xFF4BAEFF) // User message color
-              : const Color.fromARGB(179, 255, 191, 0), // AI message color
+              ? const Color.fromARGB(255, 16, 92, 191) // User message color
+              : const Color.fromARGB(255, 226, 172, 36), // AI message color
           //////////////////////////////////////////////
           // Set border radius based on message type
           //////////////////////////////////////////////
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(12.0),
-            topRight: Radius.circular(12.0),
-            bottomLeft: isUserMessage ? Radius.circular(12.0) : Radius.zero,
-            bottomRight: isUserMessage ? Radius.zero : Radius.circular(12.0),
+            topLeft: Radius.circular(20.0),
+            topRight: Radius.circular(20.0),
+            bottomLeft: isUserMessage ? Radius.circular(20.0) : Radius.zero,
+            bottomRight: isUserMessage ? Radius.zero : Radius.circular(20.0),
           ),
           //////////////////////////////////////////////
           // Apply shadow for subtle elevation

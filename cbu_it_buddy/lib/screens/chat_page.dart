@@ -1,3 +1,4 @@
+import 'dart:async'; // Import Timer
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/chat_bubbles.dart';
@@ -29,8 +30,21 @@ class _ChatPageState extends State<ChatPage> {
 
   Future<void> _fetchBibleVerse() async {
     String verse = await BibleService().fetchBibleVerse();
+
+    // Display the first message with the Bible verse
     setState(() {
-      _chatMessages.add({"message": verse, "isUserMessage": false});
+      _chatMessages
+          .add({"message": "Hi Lancer!\n\n'$verse'", "isUserMessage": false});
+    });
+
+    // Add a 2-second delay for the follow-up message
+    Timer(const Duration(seconds: 2), () {
+      setState(() {
+        _chatMessages.add({
+          "message": "Is there anything I can help you with today?",
+          "isUserMessage": false
+        });
+      });
     });
   }
 
@@ -63,7 +77,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Chat with IT Buddy"),
+        title: const Text("IT-Buddy"),
       ),
       body: Column(
         children: [
@@ -85,7 +99,7 @@ class _ChatPageState extends State<ChatPage> {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                padding: const EdgeInsets.symmetric(vertical: 6.0),
                 child: Row(
                   children: [
                     const SizedBox(width: 16.0),
@@ -118,7 +132,7 @@ class _ChatPageState extends State<ChatPage> {
                     focusNode: _focusNode,
                     controller: _textController,
                     decoration: InputDecoration(
-                      hintText: "Type your message...",
+                      hintText: "Enter a prompt here...",
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
