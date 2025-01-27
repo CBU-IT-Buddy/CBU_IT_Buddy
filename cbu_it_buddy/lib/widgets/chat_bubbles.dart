@@ -46,17 +46,10 @@ class ChatBubble extends StatelessWidget {
           // Set border radius based on message type
           //////////////////////////////////////////////
           borderRadius: BorderRadius.only(
-<<<<<<< Updated upstream
             topLeft: Radius.circular(20.0),
             topRight: Radius.circular(20.0),
             bottomLeft: isUserMessage ? Radius.circular(20.0) : Radius.zero,
             bottomRight: isUserMessage ? Radius.zero : Radius.circular(20.0),
-=======
-            topLeft: const Radius.circular(12.0),
-            topRight: const Radius.circular(12.0),
-            bottomLeft: isUserMessage ? const Radius.circular(12.0) : Radius.zero,
-            bottomRight: isUserMessage ? Radius.zero : const Radius.circular(12.0),
->>>>>>> Stashed changes
           ),
           //////////////////////////////////////////////
           // Apply shadow for subtle elevation

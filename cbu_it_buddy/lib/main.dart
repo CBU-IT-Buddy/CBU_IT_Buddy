@@ -23,16 +23,6 @@ void main() async {
     print("❌ ERROR: .env file not found! $e");
   }
 
-  // ✅ Initialize Firebase and wait until it's ready
-  try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    print("🟢 Firebase initialized successfully!");
-  } catch (e) {
-    print("❌ ERROR: Firebase initialization failed! $e");
-  }
-
   runApp(const CBUITBuddyApp());
 }
 
@@ -50,6 +40,7 @@ class CBUITBuddyApp extends StatelessWidget {
       ),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
+          print("🟢 Firebase initialized successfully!");
           return MaterialApp(
             title: 'CBU IT Buddy',
             theme: ThemeData(
@@ -59,6 +50,7 @@ class CBUITBuddyApp extends StatelessWidget {
             home: const MainPage(),
           );
         } else if (snapshot.hasError) {
+          print("❌ Firebase initialization error: ${snapshot.error}");
           return MaterialApp(
             home: Scaffold(
               body: Center(
@@ -70,7 +62,7 @@ class CBUITBuddyApp extends StatelessWidget {
         return const MaterialApp(
           home: Scaffold(
             body: Center(
-              child: CircularProgressIndicator(), // ✅ Show loading indicator
+              child: CircularProgressIndicator(), // ✅ Show loading until Firebase is ready
             ),
           ),
         );
@@ -90,7 +82,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  // Track the currently selected page
+  // ✅ Initialize selected page
   Widget _selectedPage = const ChatPage(query: 'Reset Password');
 
   @override
@@ -99,8 +91,8 @@ class _MainPageState extends State<MainPage> {
 
     return Scaffold(
       appBar: AppBar(
-          // title: const Text('CBU IT Buddy'),
-          ),
+        title: const Text('CBU IT Buddy'),
+      ),
       //////////////////////////////////////////////
       // ✅ Brian edited code: Added SafeArea to prevent UI issues
       //////////////////////////////////////////////
@@ -122,123 +114,58 @@ class _MainPageState extends State<MainPage> {
                 leading: const Icon(Icons.chat),
                 title: const Text('New Chat'),
                 onTap: () {
-                  print("🟢 Navigating to Chat Page...");
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ChatPage(
-                          query: 'Reset Password'), // Example query
-                    ),
-                  );
+                  setState(() {
+                    _selectedPage = const ChatPage(query: 'Reset Password');
+                  });
+                  Navigator.pop(context);
                 },
               ),
-<<<<<<< Updated upstream
-            ),
-            ListTile(
-              leading: const Icon(Icons.chat),
-              title: const Text('New Chat'),
-              onTap: () {
-                setState(() {
-                  _selectedPage = const ChatPage(query: 'Reset Password');
-                });
-                Navigator.pop(context); // Close the drawer
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.question_answer),
-              title: const Text('Frequently Asked Q&A'),
-              onTap: () {
-                setState(() {
-                  _selectedPage = const FAQPage();
-                });
-                Navigator.pop(context); // Close the drawer
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.contacts),
-              title: const Text('CBU Departments Contact'),
-              onTap: () {
-                setState(() {
-                  _selectedPage = const DepartmentsContactPage();
-                });
-                Navigator.pop(context); // Close the drawer
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.feedback),
-              title: const Text('Feedback for IT-Buddy'),
-              onTap: () {
-                setState(() {
-                  _selectedPage = const FeedbackPage();
-                });
-                Navigator.pop(context); // Close the drawer
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.videogame_asset),
-              title: const Text('IT Office Game'),
-              onTap: () {
-                setState(() {
-                  _selectedPage = const GamePage();
-                });
-                Navigator.pop(context); // Close the drawer
-              },
-            ),
-          ],
-=======
               ListTile(
                 leading: const Icon(Icons.question_answer),
                 title: const Text('Frequently Asked Q&A'),
                 onTap: () {
-                  print("🟢 Navigating to FAQ Page...");
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const FAQPage()),
-                  );
+                  setState(() {
+                    _selectedPage = const FAQPage();
+                  });
+                  Navigator.pop(context);
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.contacts),
                 title: const Text('CBU Departments Contact'),
                 onTap: () {
-                  print("🟢 Navigating to Departments Contact Page...");
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const DepartmentsContactPage()),
-                  );
+                  setState(() {
+                    _selectedPage = const DepartmentsContactPage();
+                  });
+                  Navigator.pop(context);
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.feedback),
                 title: const Text('Feedback for IT-Buddy'),
                 onTap: () {
-                  print("🟢 Navigating to Feedback Page...");
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const FeedbackPage()),
-                  );
+                  setState(() {
+                    _selectedPage = const FeedbackPage();
+                  });
+                  Navigator.pop(context);
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.videogame_asset),
                 title: const Text('IT Office Game'),
                 onTap: () {
-                  print("🟢 Navigating to IT Office Game...");
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const GamePage()),
-                  );
+                  setState(() {
+                    _selectedPage = const GamePage();
+                  });
+                  Navigator.pop(context);
                 },
               ),
             ],
           ),
->>>>>>> Stashed changes
         ),
       ),
       //////////////////////////////////////////////
-      // Set the Selected Page as the Body !!!!!!
+      // ✅ Set the Selected Page as the Body
       //////////////////////////////////////////////
       body: _selectedPage,
     );
