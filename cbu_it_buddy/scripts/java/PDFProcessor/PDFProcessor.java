@@ -46,7 +46,7 @@ public class PDFProcessor {
             }
 
             // Save the output file in the text folder
-            String outputFile = "text/" + pdfFile.getName().replace(".pdf", "_formatted.txt");
+            String outputFile = "text/" + pdfFile.getName().replace(".pdf", ".txt");
             try (FileWriter writer = new FileWriter(outputFile)) {
                 writer.write(text);
             }
@@ -97,8 +97,7 @@ public class PDFProcessor {
             }
         }
     }
-
-    // Example usage
+    
     public static void main(String[] args) {
         ///////////////////////////////////////////////////
         // Select folder path

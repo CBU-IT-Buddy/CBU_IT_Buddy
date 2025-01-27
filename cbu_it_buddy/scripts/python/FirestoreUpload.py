@@ -28,7 +28,7 @@ def print_collection_size():
     print(f"Number of documents in the collection: {doc_count}")
 
 # Loop through the text folder
-text_folder = 'text'
+text_folder = 'scripts/java/PDFProcessor/text'
 for filename in os.listdir(text_folder):
     if filename.endswith('.txt'):
         file_path = os.path.join(text_folder, filename)
