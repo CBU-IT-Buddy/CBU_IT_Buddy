@@ -1,14 +1,14 @@
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.List;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
 
-public class PDFTextExtractor {
-
+public class PDFProcessor {
     // Custom class to extract text with formatting (font size, font name, and style)
     static class CustomPDFTextStripper extends PDFTextStripper {
         public CustomPDFTextStripper() throws IOException {}
@@ -19,27 +19,34 @@ public class PDFTextExtractor {
                 // Get the font name and size for each piece of text
                 String font = textPosition.getFont().getName();
                 float fontSize = textPosition.getFontSizeInPt();
-                System.out.println("Text: " + textPosition.getUnicode() +
-                                   ", Font: " + font + 
-                                   ", Size: " + fontSize);
+                // System.out.println("Text: " + textPosition.getUnicode() +
+                                //    ", Font: " + font + 
+                                //    ", Size: " + fontSize);
             }
             super.writeString(text, textPositions);
         }
     }
 
     // Extracts text from a PDF file with formatting information and saves it to a text file
-    public static void extractTextWithFormatting(String pdfPath) throws IOException {
+    public static void extractText(String pdfPath) throws IOException {
         File pdfFile = new File(pdfPath);
         if (!pdfFile.exists()) {
             System.out.println("The PDF file does not exist.");
             return;
         }
 
-        try (PDDocument document = PDDocument.load(pdfFile)) {
+        try (PDDocument document = Loader.loadPDF(pdfFile)) {
             CustomPDFTextStripper pdfStripper = new CustomPDFTextStripper();
             String text = pdfStripper.getText(document); // .getText() is from Apache PDFBox lib
 
-            String outputFile = pdfPath.replace(".pdf", "_formatted.txt");
+            // Create the text folder if it doesn't exist
+            File textFolder = new File("text");
+            if (!textFolder.exists()) {
+                textFolder.mkdirs();
+            }
+
+            // Save the output file in the text folder
+            String outputFile = "text/" + pdfFile.getName().replace(".pdf", "_formatted.txt");
             try (FileWriter writer = new FileWriter(outputFile)) {
                 writer.write(text);
             }
@@ -55,7 +62,7 @@ public class PDFTextExtractor {
             return;
         }
 
-        try (PDDocument document = PDDocument.load(pdfFile)) {
+        try (PDDocument document = Loader.loadPDF(pdfFile)) {
             PDDocumentInformation info = document.getDocumentInformation();
 
             // Prepare the metadata output file
@@ -67,8 +74,6 @@ public class PDFTextExtractor {
                 writer.write("Keywords: " + info.getKeywords() + "\n");
                 writer.write("Creation Date: " + info.getCreationDate() + "\n");
                 writer.write("Modification Date: " + info.getModificationDate() + "\n");
-                writer.write("Producer: " + info.getProducer() + "\n");
-                writer.write("Trapped: " + info.getTrapped() + "\n");
             }
             System.out.println("Metadata extracted and saved to: " + metadataFile);
         }
@@ -86,8 +91,8 @@ public class PDFTextExtractor {
         if (files != null) {
             for (File file : files) {
                 if (file.isFile() && file.getName().endsWith(".pdf")) {
-                    extractTextWithFormatting(file.getAbsolutePath());  // Extract text with formatting
-                    extractPDFMetadata(file.getAbsolutePath());  // Extract metadata and save it
+                    extractText(file.getAbsolutePath());  // Extract text with formatting
+                    // extractPDFMetadata(file.getAbsolutePath());  // Extract metadata and save it
                 }
             }
         }
@@ -95,10 +100,15 @@ public class PDFTextExtractor {
 
     // Example usage
     public static void main(String[] args) {
-        String folderPath = "path/to/your/folder/with/pdfs";
-
+        ///////////////////////////////////////////////////
+        // Select folder path
+        ///////////////////////////////////////////////////
+        String folderPath = "scripts/java/PDFProcessor/pdf";
+        // String pdfPath = "";
         try {
             extractTextFromPDFFolder(folderPath);  // Scan all PDFs in the folder
+            // extractTextWithFormatting(pdfPath);
+            // extractPDFMetadata(pdfPath);
         } catch (IOException e) {
             System.err.println("An error occurred while processing the PDF files: " + e.getMessage());
         }
