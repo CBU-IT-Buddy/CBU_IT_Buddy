@@ -12,8 +12,8 @@ class FAQPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Frequently Asked Q&A'), // Title for the AppBar
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0), // Padding around the FAQList
+      body: const Padding(
+        padding: EdgeInsets.all(16.0), // Padding around the FAQList
         child: FAQList(), // Display FAQList widget
       ),
     );
@@ -24,7 +24,7 @@ class FAQPage extends StatelessWidget {
 // FAQ List with Expand/Collapse Functionality
 //////////////////////////////////////////////
 class FAQList extends StatefulWidget {
-  const FAQList({Key? key}) : super(key: key);
+  const FAQList({super.key});
 
   @override
   _FAQListState createState() => _FAQListState();

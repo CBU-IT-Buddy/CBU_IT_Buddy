@@ -5,6 +5,7 @@ import '../widgets/chat_bubbles.dart';
 import '../helpers/chatbot_helper.dart';
 import '../services/bible_service.dart';
 import '../widgets/option_card.dart';
+import 'package:firebase_core/firebase_core.dart'; // ✅ Ensure Firebase is imported
 
 class ChatPage extends StatefulWidget {
   final String query;
@@ -21,14 +22,30 @@ class _ChatPageState extends State<ChatPage> {
   final TextEditingController _textController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   bool _hasSubmittedMessage = false;
+  bool _isFirebaseInitialized = false; // ✅ Track Firebase initialization
 
   @override
   void initState() {
     super.initState();
-    _fetchBibleVerse(); // Fetch the Bible verse when the page loads
+    _initializeFirebaseAndLoadData();
+  }
+
+  // ✅ Ensure Firebase is initialized before fetching Bible verse
+  Future<void> _initializeFirebaseAndLoadData() async {
+    try {
+      await Firebase.initializeApp(); // ✅ Ensures Firebase is initialized
+      print("🟢 Firebase initialized inside ChatPage");
+      setState(() {
+        _isFirebaseInitialized = true;
+      });
+      _fetchBibleVerse();
+    } catch (e) {
+      print("❌ ERROR: Firebase failed to initialize in ChatPage: $e");
+    }
   }
 
   Future<void> _fetchBibleVerse() async {
+    if (!_isFirebaseInitialized) return; // ✅ Ensure Firebase is ready before running
     String verse = await BibleService().fetchBibleVerse();
 
     // Display the first message with the Bible verse
@@ -57,20 +74,21 @@ class _ChatPageState extends State<ChatPage> {
         _hasSubmittedMessage = true;
       });
 
-      String botResponse = await _chatbotHelper.getAnswer(userMessage);
+      // ✅ FIX: Extract both "summary" and "content" from the response
+      Map<String, String> botResponseMap = await _chatbotHelper.getAnswer(userMessage);
+      String botSummary = botResponseMap["summary"] ?? "No summary available.";
+      String botContent = botResponseMap["content"] ?? "No response available.";
 
       setState(() {
-        _chatMessages.add({"message": botResponse, "isUserMessage": false});
+        // ✅ First, show the summary as a chatbot response
+        _chatMessages.add({"message": "**Summary:** $botSummary", "isUserMessage": false});
+
+        // ✅ Then, show the full content as another response
+        _chatMessages.add({"message": botContent, "isUserMessage": false});
+
         _textController.clear();
       });
     }
-  }
-
-  @override
-  void dispose() {
-    _focusNode.dispose();
-    _textController.dispose();
-    super.dispose();
   }
 
   @override
@@ -79,6 +97,7 @@ class _ChatPageState extends State<ChatPage> {
       appBar: AppBar(
         title: const Text("IT-Buddy"),
       ),
+<<<<<<< Updated upstream
       body: Column(
         children: [
           Expanded(
@@ -139,26 +158,57 @@ class _ChatPageState extends State<ChatPage> {
                       contentPadding:
                           const EdgeInsets.symmetric(horizontal: 16.0),
                     ),
+=======
+      body: _isFirebaseInitialized
+          ? Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    reverse: true,
+                    itemCount: _chatMessages.length,
+                    itemBuilder: (context, index) {
+                      final messageData =
+                          _chatMessages[_chatMessages.length - 1 - index];
+                      return ChatBubble(
+                        message: messageData['message'],
+                        isUserMessage: messageData['isUserMessage'],
+                      );
+                    },
+>>>>>>> Stashed changes
                   ),
                 ),
-                const SizedBox(width: 10),
-                IconButton(
-                  icon: const Icon(Icons.send,
-                      color: Color.fromARGB(255, 11, 54, 90)),
-                  onPressed: _handleSubmitMessage,
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          focusNode: _focusNode,
+                          controller: _textController,
+                          decoration: InputDecoration(
+                            hintText: "Type your message...",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      IconButton(
+                        icon: const Icon(Icons.send,
+                            color: Color.fromARGB(255, 11, 54, 90)),
+                        onPressed: _handleSubmitMessage,
+                      ),
+                    ],
+                  ),
                 ),
               ],
+            )
+          : const Center(
+              child: CircularProgressIndicator(), // ✅ Show a loading indicator until Firebase initializes
             ),
-          ),
-        ],
-      ),
     );
-  }
-
-  void _submitQuickMessage(String message) {
-    setState(() {
-      _textController.text = message;
-    });
-    _handleSubmitMessage();
   }
 }

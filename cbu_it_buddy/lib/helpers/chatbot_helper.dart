@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../services/llm_service.dart'; // Brian edited code (Added LLM Service import)
 
 class ChatbotHelper {
-  // Firestore instance
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final LLMService _llmService = LLMService(); // Brian edited code (LLM Service instance)
 
   ////////////////////////////////////////////////
-  // Get answer from Firestore
+  // Get answer from Firestore with Summary
   ////////////////////////////////////////////////
-  Future<String> getAnswer(String question) async {
+  Future<Map<String, String>> getAnswer(String question) async {
     try {
       String normalizedQuestion = question.toLowerCase();
 
@@ -15,34 +16,53 @@ class ChatbotHelper {
       QuerySnapshot querySnapshot =
           await _firestore.collection('solutions').get();
 
-      // Iterate through the documents to find a match
+      // Iterate through documents to find a match
       for (var doc in querySnapshot.docs) {
         String title = doc['title']?.toString().toLowerCase() ?? '';
-        print(
-            'Comparing Question: "$normalizedQuestion" with Title: "$title"'); // Debug print
+        print('Comparing Question: "$normalizedQuestion" with Title: "$title"');
 
-        // Match keywords in title using regex
-        // Allow better matching by considering individual words in the question
+        // Regex matching to improve query flexibility
         RegExp regExp = RegExp(r'\b(?:' + _buildRegexPattern(title) + r')\b',
             caseSensitive: false);
 
         if (regExp.hasMatch(normalizedQuestion)) {
           String content = doc['content'] ?? 'No content available.';
           String link = doc['link'] ?? '';
-          return _formatResponse(title, content, link);
+
+          // ✅ Brian edited code: Explicitly cast Firestore data to a Map
+          Map<String, dynamic>? docData = doc.data() as Map<String, dynamic>?;
+
+          // ✅ Brian edited code: Check if 'summary' exists before generating it
+          String summary = (docData != null && docData.containsKey('summary'))
+              ? docData['summary']
+              : await _llmService.generateSummary(content);
+
+          return {
+            "summary": summary,
+            "content": content,
+            "link": link
+          };
         }
       }
 
-      return "Sorry, I don't have an answer for that question. Please try asking in a different way.";
+      return {
+        "summary": "No summary available", // Brian edited code (Default summary response)
+        "content": "Sorry, I don't have an answer for that question. Try rephrasing it.",
+        "link": ""
+      };
     } catch (e, stackTrace) {
       print('Error fetching solution: $e');
       print(stackTrace);
-      return 'An error occurred while retrieving the solution. Please try again later.';
+      return {
+        "summary": "Error occurred", // Brian edited code (Handle error with summary)
+        "content": "An error occurred while retrieving the solution. Please try again later.",
+        "link": ""
+      };
     }
   }
 
   ////////////////////////////////////////
-  // Format the chatbot response
+  // Format chatbot response
   ////////////////////////////////////////
   String _formatResponse(String title, String content, String link) {
     StringBuffer responseBuffer = StringBuffer();
@@ -61,11 +81,10 @@ class ChatbotHelper {
   // Build regex pattern from title words
   ////////////////////////////////////////
   String _buildRegexPattern(String title) {
-    // Remove common words and split by space, then join with '|'
     List<String> titleWords = title.split(' ').where((word) {
-      return word.length > 3; // Filter out short words (like "the", "and")
+      return word.length > 3; // Remove short words like "the", "and"
     }).toList();
 
-    return titleWords.join(r'\b|\b'); // Join words to form the regex pattern
+    return titleWords.join(r'\b|\b'); // Join words to form regex pattern
   }
 }

@@ -2,22 +2,38 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'services/firebase_options.dart';
 import 'widgets/app_bar.dart'; // Custom AppBar file import
-//import 'home_page.dart'; // HomePage file import (New Chat)
 import 'services/feedback_page.dart'; // Feedback Page
 import 'screens/faq_page.dart'; // Frequently Asked Q&A Page
 import 'screens/departments_contact_page.dart'; // CBU Departments Contact Page
 import 'screens/game_page.dart'; // IT Office Game page import
 import 'screens/chat_page.dart'; // Import the new ChatPage
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // env for API key
 
 //////////////////////////////////////////////
 // Main function to run the app
 //////////////////////////////////////////////
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  runApp(CBUITBuddyApp());
+
+  // ✅ Load environment variables
+  try {
+    await dotenv.load();
+    print("🟢 .env file loaded successfully!");
+  } catch (e) {
+    print("❌ ERROR: .env file not found! $e");
+  }
+
+  // ✅ Initialize Firebase and wait until it's ready
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    print("🟢 Firebase initialized successfully!");
+  } catch (e) {
+    print("❌ ERROR: Firebase initialization failed! $e");
+  }
+
+  runApp(const CBUITBuddyApp());
 }
 
 //////////////////////////////////////////////
@@ -28,12 +44,37 @@ class CBUITBuddyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'CBU IT Buddy',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return FutureBuilder(
+      future: Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
       ),
-      home: const MainPage(), // Set the main page with navigation drawer
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return MaterialApp(
+            title: 'CBU IT Buddy',
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+            ),
+            debugShowCheckedModeBanner: false,
+            home: const MainPage(),
+          );
+        } else if (snapshot.hasError) {
+          return MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child: Text("❌ Firebase failed to initialize: ${snapshot.error}"),
+              ),
+            ),
+          );
+        }
+        return const MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(), // ✅ Show loading indicator
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -54,25 +95,44 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    print("🟢 MainPage Widget is Building..."); // ✅ Debugging print
+
     return Scaffold(
       appBar: AppBar(
           // title: const Text('CBU IT Buddy'),
           ),
       //////////////////////////////////////////////
-      // Navigation Drawer Code !!!!!!
+      // ✅ Brian edited code: Added SafeArea to prevent UI issues
       //////////////////////////////////////////////
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
+      drawer: SafeArea(
+        child: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Text(
+                  'User Selection',
+                  style: TextStyle(color: Colors.white, fontSize: 24),
+                ),
               ),
-              child: Text(
-                'User Selection',
-                style: TextStyle(color: Colors.white, fontSize: 24),
+              ListTile(
+                leading: const Icon(Icons.chat),
+                title: const Text('New Chat'),
+                onTap: () {
+                  print("🟢 Navigating to Chat Page...");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ChatPage(
+                          query: 'Reset Password'), // Example query
+                    ),
+                  );
+                },
               ),
+<<<<<<< Updated upstream
             ),
             ListTile(
               leading: const Icon(Icons.chat),
@@ -125,6 +185,56 @@ class _MainPageState extends State<MainPage> {
               },
             ),
           ],
+=======
+              ListTile(
+                leading: const Icon(Icons.question_answer),
+                title: const Text('Frequently Asked Q&A'),
+                onTap: () {
+                  print("🟢 Navigating to FAQ Page...");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const FAQPage()),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.contacts),
+                title: const Text('CBU Departments Contact'),
+                onTap: () {
+                  print("🟢 Navigating to Departments Contact Page...");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const DepartmentsContactPage()),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.feedback),
+                title: const Text('Feedback for IT-Buddy'),
+                onTap: () {
+                  print("🟢 Navigating to Feedback Page...");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const FeedbackPage()),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.videogame_asset),
+                title: const Text('IT Office Game'),
+                onTap: () {
+                  print("🟢 Navigating to IT Office Game...");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const GamePage()),
+                  );
+                },
+              ),
+            ],
+          ),
+>>>>>>> Stashed changes
         ),
       ),
       //////////////////////////////////////////////
