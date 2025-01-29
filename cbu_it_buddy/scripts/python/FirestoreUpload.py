@@ -50,8 +50,8 @@ for filename in os.listdir(text_folder):
             if not link:
                 link = ''
             
-            # Remove the .txt extension from the title
-            title = filename.replace('.txt', '')
+            # Format the title of the document
+            title = filename.replace(' _ Knowledge Base _ California Baptist University_formatted.txt', '')
 
             document_data = {
                 "content": content,
