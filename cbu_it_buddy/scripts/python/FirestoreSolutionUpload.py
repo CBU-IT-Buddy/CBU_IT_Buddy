@@ -9,7 +9,7 @@ from firebase_admin import firestore
 ##########################################################
 # Update API JSON path
 ##########################################################
-cred = credentials.Certificate(".json")
+cred = credentials.Certificate("keys/cbu-it-buddy-2d42e936a39c.json")
 firebase_admin.initialize_app(cred)
 
 

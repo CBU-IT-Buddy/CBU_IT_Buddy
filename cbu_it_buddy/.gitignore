@@ -47,3 +47,4 @@ app.*.map.json
 # Folders
 scripts/java/PDFProcessor/pdf
 scripts/java/PDFProcessor/text
+keys/*.json
