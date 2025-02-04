@@ -3,12 +3,11 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
+##########################################################
+# Upload all the text files in the text folder to Firestore
+##########################################################
 
 # Initialize Firestore
-
-##########################################################
-# Update API JSON path
-##########################################################
 cred = credentials.Certificate("keys/cbu-it-buddy-2d42e936a39c.json")
 firebase_admin.initialize_app(cred)
 

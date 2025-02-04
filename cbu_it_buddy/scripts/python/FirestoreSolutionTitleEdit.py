@@ -3,6 +3,10 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
+##########################################################
+# One time use script to remove the long title from the documents
+##########################################################
+
 # Initialize Firestore
 cred = credentials.Certificate("keys/cbu-it-buddy-2d42e936a39c.json")
 firebase_admin.initialize_app(cred)
