@@ -9,7 +9,7 @@ import '../widgets/option_card.dart';
 class ChatPage extends StatefulWidget {
   final String query;
 
-  const ChatPage({Key? key, required this.query}) : super(key: key);
+  const ChatPage({super.key, required this.query});
 
   @override
   _ChatPageState createState() => _ChatPageState();

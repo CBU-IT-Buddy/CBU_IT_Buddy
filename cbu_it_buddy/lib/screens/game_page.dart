@@ -22,17 +22,17 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
   int _lives = 3; // Number of lives
   int _level = 1; // Level of the user is at.
   int _difficulty = 1;
-  int _ringingStationsCount = 1;
+  final int _ringingStationsCount = 1;
   bool _isDifficultyTwo = false;
-  bool _isDifficultyThree = false;
-  bool _isWalkInActive = false;
+  final bool _isDifficultyThree = false;
+  final bool _isWalkInActive = false;
   bool _walkInTriggered = false;
   bool _walkInAnswered = false;
-  Map<int, DateTime> _stationTimers = {};
-  Map<int, bool> _stationAnswered = {};
-  List<int> _answeredStations = [];
-  bool _firstWalkinAnswered = false;
-  bool _secondWalkinActive= false;
+  final Map<int, DateTime> _stationTimers = {};
+  final Map<int, bool> _stationAnswered = {};
+  final List<int> _answeredStations = [];
+  final bool _firstWalkinAnswered = false;
+  final bool _secondWalkinActive= false;
   Map<int, String> difficultyNames = {
   1: "Easy",
   2: "Medium",
