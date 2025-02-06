@@ -31,8 +31,7 @@ class HintDialog extends StatefulWidget {
   final Function onHintCompleted;
 
   const HintDialog(
-      {Key? key, required this.correctStation, required this.onHintCompleted})
-      : super(key: key);
+      {super.key, required this.correctStation, required this.onHintCompleted});
 
   @override
   _HintDialogState createState() => _HintDialogState();
@@ -59,7 +58,7 @@ class _HintDialogState extends State<HintDialog>
     // Animate character from random position to the correct station
     _animation = Tween<Offset>(
       begin: Offset(_random.nextDouble() * 2 - 1, _random.nextDouble() * 2 - 1),
-      end: Offset(0, 0), // Move towards the center of the screen
+      end: const Offset(0, 0), // Move towards the center of the screen
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     // Start the animation and proceed with the game once the hint is completed
@@ -88,11 +87,11 @@ class _HintDialogState extends State<HintDialog>
         padding: const EdgeInsets.all(20),
         child: Stack(
           children: [
-            Center(child: Text("Character giving a hint...")),
+            const Center(child: Text("Character giving a hint...")),
             SlideTransition(
               position:
                   _animation, // Position of the character based on the animation
-              child: Icon(Icons.person, size: 50), // Character icon
+              child: const Icon(Icons.person, size: 50), // Character icon
             ),
           ],
         ),

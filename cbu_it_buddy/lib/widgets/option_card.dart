@@ -7,11 +7,11 @@ class OptionCard extends StatelessWidget {
   final VoidCallback onTap; // Function to handle the tap event (no parameters)
 
   const OptionCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.subtitle,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

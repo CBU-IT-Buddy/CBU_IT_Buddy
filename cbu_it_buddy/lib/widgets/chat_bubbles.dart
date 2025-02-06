@@ -12,14 +12,14 @@ class ChatBubble extends StatelessWidget {
   final EdgeInsetsGeometry? margin; // Custom margin for bubble
 
   const ChatBubble({
-    Key? key,
+    super.key,
     required this.message,
     required this.isUserMessage,
     this.userMessageStyle,
     this.aiMessageStyle,
     this.padding,
     this.margin,
-  }) : super(key: key);
+  });
 
   //////////////////////////////////////////////
   // Build method for the ChatBubble UI
@@ -46,10 +46,12 @@ class ChatBubble extends StatelessWidget {
           // Set border radius based on message type
           //////////////////////////////////////////////
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.0),
-            topRight: Radius.circular(20.0),
-            bottomLeft: isUserMessage ? Radius.circular(20.0) : Radius.zero,
-            bottomRight: isUserMessage ? Radius.zero : Radius.circular(20.0),
+            topLeft: const Radius.circular(20.0),
+            topRight: const Radius.circular(20.0),
+            bottomLeft:
+                isUserMessage ? const Radius.circular(20.0) : Radius.zero,
+            bottomRight:
+                isUserMessage ? Radius.zero : const Radius.circular(20.0),
           ),
           //////////////////////////////////////////////
           // Apply shadow for subtle elevation

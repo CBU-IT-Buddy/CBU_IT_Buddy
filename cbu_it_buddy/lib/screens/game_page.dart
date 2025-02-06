@@ -7,7 +7,8 @@ class GamePage extends StatefulWidget {
   _GamePageState createState() => _GamePageState();
 }
 
-class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin {
+class _GamePageState extends State<GamePage>
+    with SingleTickerProviderStateMixin {
   final Random _random = Random();
   int _ringingStation = -1; // Initially, no station is ringing
   bool _isRinging = false;
@@ -22,23 +23,22 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
   int _lives = 3; // Number of lives
   int _level = 1; // Level of the user is at.
   int _difficulty = 1;
-  int _ringingStationsCount = 1;
+  final int _ringingStationsCount = 1;
   bool _isDifficultyTwo = false;
-  bool _isDifficultyThree = false;
-  bool _isWalkInActive = false;
+  final bool _isDifficultyThree = false;
+  final bool _isWalkInActive = false;
   bool _walkInTriggered = false;
   bool _walkInAnswered = false;
-  Map<int, DateTime> _stationTimers = {};
-  Map<int, bool> _stationAnswered = {};
-  List<int> _answeredStations = [];
-  bool _firstWalkinAnswered = false;
-  bool _secondWalkinActive= false;
+  final Map<int, DateTime> _stationTimers = {};
+  final Map<int, bool> _stationAnswered = {};
+  final List<int> _answeredStations = [];
+  final bool _firstWalkinAnswered = false;
+  final bool _secondWalkinActive = false;
   Map<int, String> difficultyNames = {
-  1: "Easy",
-  2: "Medium",
-  3: "Hard",
-};
-
+    1: "Easy",
+    2: "Medium",
+    3: "Hard",
+  };
 
   // Stations
   int totalStations = 8;
@@ -54,11 +54,18 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
     ["Restart", "Call support", "Check cables"],
     ["Scan for viruses", "Buy new hardware", "Call help desk"],
     ["Restart the router", "Call IT", "Reboot computer"],
-    ["Contact help desk","Restart computer","Check caps lock"],
-    ["Check cables","Restart the system","Call IT"],
-    ["Check ink levels","Check network","Call IT desk"]
+    ["Contact help desk", "Restart computer", "Check caps lock"],
+    ["Check cables", "Restart the system", "Call IT"],
+    ["Check ink levels", "Check network", "Call IT desk"]
   ];
-  final List<String> correctAnswers = ["Restart", "Scan for viruses", "Restart the router","Check caps lock","Call IT","Check network"];
+  final List<String> correctAnswers = [
+    "Restart",
+    "Scan for viruses",
+    "Restart the router",
+    "Check caps lock",
+    "Call IT",
+    "Check network"
+  ];
 
   late AnimationController _animationController;
   bool _walkInActive = false;
@@ -94,8 +101,9 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
                 _showWalkInQuestion();
               }
             });
-          }
-          else if(_isDifficultyThree && !_walkInTriggered && !_walkInAnswered){
+          } else if (_isDifficultyThree &&
+              !_walkInTriggered &&
+              !_walkInAnswered) {
             _walkInTriggered = true;
             Future.delayed(const Duration(seconds: 10), () {
               if (mounted && !_walkInAnswered) {
@@ -105,33 +113,33 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
           }
         }
       });
-    }
-    else if (_isDifficultyTwo) {
+    } else if (_isDifficultyTwo) {
       _endGame();
     } else {
       _startDifficultyTwo();
     }
   }
+
   void _checkTimers() {
-  // Check for expired timers for both stations
-  DateTime now = DateTime.now();
-  _stationTimers.forEach((stationNumber, expirationTime) {
-    if (expirationTime.isBefore(now)) {
-      if (_lives > 0) {
-        setState(() {
-          _lives--;
-        });
+    // Check for expired timers for both stations
+    DateTime now = DateTime.now();
+    _stationTimers.forEach((stationNumber, expirationTime) {
+      if (expirationTime.isBefore(now)) {
+        if (_lives > 0) {
+          setState(() {
+            _lives--;
+          });
+        }
+        // Remove the timer since it's expired
+        _stationTimers.remove(stationNumber);
       }
-      // Remove the timer since it's expired
-      _stationTimers.remove(stationNumber);
-    }
-  });
-}
+    });
+  }
 
   // Simulate ringing at a random station
-void _ringPhone() {
-  setState(() {
-    if (_isDifficultyTwo) {
+  void _ringPhone() {
+    setState(() {
+      if (_isDifficultyTwo) {
         _ringingStation = _random.nextInt(totalStations) + 1;
         do {
           _secondRingingStation = _random.nextInt(totalStations) + 1;
@@ -140,19 +148,19 @@ void _ringPhone() {
         _ringingStation = _random.nextInt(totalStations) + 1;
       }
 
-    // Set a new question
-    _question = dummyQuestions[_random.nextInt(dummyQuestions.length)];
-    _answers = dummyAnswers[dummyQuestions.indexOf(_question)];
-    _correctAnswer = correctAnswers[dummyQuestions.indexOf(_question)];
+      // Set a new question
+      _question = dummyQuestions[_random.nextInt(dummyQuestions.length)];
+      _answers = dummyAnswers[dummyQuestions.indexOf(_question)];
+      _correctAnswer = correctAnswers[dummyQuestions.indexOf(_question)];
 
-    _totalRings++;
-    _isRinging = true;  // Start showing questions
-  });
-}
+      _totalRings++;
+      _isRinging = true; // Start showing questions
+    });
+  }
 
   // Display the stations in a grid-like arrangement
 // Display the stations in a grid-like arrangement
-Widget _buildStations() {
+  Widget _buildStations() {
     return GridView.builder(
       padding: const EdgeInsets.all(10),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -163,7 +171,8 @@ Widget _buildStations() {
       itemCount: totalStations,
       itemBuilder: (context, index) {
         int stationNumber = index + 1;
-        bool isRinging = stationNumber == _ringingStation || stationNumber == _secondRingingStation;
+        bool isRinging = stationNumber == _ringingStation ||
+            stationNumber == _secondRingingStation;
 
         return GestureDetector(
           onTap: isRinging ? () => _onStationTap(stationNumber) : null,
@@ -187,92 +196,94 @@ Widget _buildStations() {
   }
 
   // Walk-in station displayed separately
-Widget _buildWalkInStation() {
-  Color animatedColor = ColorTween(
-    begin: Colors.blue,
-    end: Colors.lightBlue,
-  ).animate(_animationController).value ?? Colors.grey;
+  Widget _buildWalkInStation() {
+    Color animatedColor = ColorTween(
+          begin: Colors.blue,
+          end: Colors.lightBlue,
+        ).animate(_animationController).value ??
+        Colors.grey;
 
-  return GestureDetector(
-    onTap: () {
-
-    },
-    child: Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: _walkInActive ? animatedColor : Colors.grey[300],
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Colors.black),
-      ),
-      child: const Center(
-        child: Text(
-          'W (Walk-in)',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    return GestureDetector(
+      onTap: () {},
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: _walkInActive ? animatedColor : Colors.grey[300],
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: Colors.black),
+        ),
+        child: const Center(
+          child: Text(
+            'W (Walk-in)',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   // When the user taps the ringing station
   void _onStationTap(int stationNumber) {
-  // Mark the station as answered
-  setState(() {
-    _stationAnswered[stationNumber] = true;
-  });
+    // Mark the station as answered
+    setState(() {
+      _stationAnswered[stationNumber] = true;
+    });
 
-  // Your existing logic for showing question and answers
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text(_question),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: _answers.map((answer) {
-          return ListTile(
-            title: Text(answer),
-            onTap: () {
-              _showAnswerFeedback(answer == _correctAnswer, answer);
-            },
-          );
-        }).toList(),
+    // Your existing logic for showing question and answers
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(_question),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: _answers.map((answer) {
+            return ListTile(
+              title: Text(answer),
+              onTap: () {
+                _showAnswerFeedback(answer == _correctAnswer, answer);
+              },
+            );
+          }).toList(),
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   // Show a question for the walk-in station
-void _showWalkInQuestion() {
-  _startQuestionTimer();
-  setState(() {
-    _walkInActive = true;
-  });
+  void _showWalkInQuestion() {
+    _startQuestionTimer();
+    setState(() {
+      _walkInActive = true;
+    });
 
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text(_question),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: _answers.map((answer) {
-          return ListTile(
-            title: Text(answer),
-            onTap: () {
-              _showAnswerFeedback(answer == _correctAnswer, answer, isWalkIn: true);
-              setState(() {
-                _walkInAnswered = true; // Mark as answered
-              });
-            },
-          );
-        }).toList(),
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(_question),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: _answers.map((answer) {
+            return ListTile(
+              title: Text(answer),
+              onTap: () {
+                _showAnswerFeedback(answer == _correctAnswer, answer,
+                    isWalkIn: true);
+                setState(() {
+                  _walkInAnswered = true; // Mark as answered
+                });
+              },
+            );
+          }).toList(),
+        ),
       ),
-    ),
-  ).then((_) {
-    setState(() => _walkInActive = false);
-    _animationController.reset();
-  });
-}
-  void _showAnswerFeedback(bool isCorrect, String selectedAnswer, {bool isWalkIn = false}) {
+    ).then((_) {
+      setState(() => _walkInActive = false);
+      _animationController.reset();
+    });
+  }
+
+  void _showAnswerFeedback(bool isCorrect, String selectedAnswer,
+      {bool isWalkIn = false}) {
     Navigator.of(context).pop();
 
     setState(() {
@@ -294,11 +305,11 @@ void _showWalkInQuestion() {
               Navigator.of(context).pop();
               if (_xp >= 30 && !_isDifficultyTwo) {
                 _startDifficultyTwo();
-              } else if(_xp>=50 && _isDifficultyTwo){
+              } else if (_xp >= 50 && _isDifficultyTwo) {
                 _startDifficultyThree();
-              }else if(_xp>=120 && _isDifficultyThree){
+              } else if (_xp >= 120 && _isDifficultyThree) {
                 _endGame();
-              }else if (_isDifficultyThree && _totalRings >= _maxRings) {
+              } else if (_isDifficultyThree && _totalRings >= _maxRings) {
                 _endGame();
               } else {
                 _resetForNextRing();
@@ -310,7 +321,8 @@ void _showWalkInQuestion() {
       ),
     );
   }
-    void _startDifficultyTwo() {
+
+  void _startDifficultyTwo() {
     setState(() {
       _level = 2;
       _totalRings = 0;
@@ -324,7 +336,8 @@ void _showWalkInQuestion() {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Level Up!"),
-        content: const Text("Welcome to Level 2! Answer questions from two ringing stations and handle walk-ins!"),
+        content: const Text(
+            "Welcome to Level 2! Answer questions from two ringing stations and handle walk-ins!"),
         actions: [
           TextButton(
             onPressed: () {
@@ -337,33 +350,35 @@ void _showWalkInQuestion() {
       ),
     );
   }
-  void _startDifficultyThree() {
-  setState(() {
-    _level = 3;
-    _totalRings = 0;
-    _xp = 0;
-    _isDifficultyTwo = false; // Exit difficulty two mode
-    _difficulty = 3;
-    totalStations = 12;
-  });
 
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text("Level Up!"),
-      content: const Text("Welcome to Level 3! Answer questions from 12 stations and handle walk-ins!"),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-            scheduleNextRing(); // Start the ringing logic for level 3
-          },
-          child: const Text("Start Level 3"),
-        ),
-      ],
-    ),
-  );
-}
+  void _startDifficultyThree() {
+    setState(() {
+      _level = 3;
+      _totalRings = 0;
+      _xp = 0;
+      _isDifficultyTwo = false; // Exit difficulty two mode
+      _difficulty = 3;
+      totalStations = 12;
+    });
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Level Up!"),
+        content: const Text(
+            "Welcome to Level 3! Answer questions from 12 stations and handle walk-ins!"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              scheduleNextRing(); // Start the ringing logic for level 3
+            },
+            child: const Text("Start Level 3"),
+          ),
+        ],
+      ),
+    );
+  }
 
   // End the game after 5 rings
   void _endGame() {
@@ -390,7 +405,8 @@ void _showWalkInQuestion() {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(); // Close the dialog
-              Navigator.of(context).pop(); // Go back to the previous screen (main page)
+              Navigator.of(context)
+                  .pop(); // Go back to the previous screen (main page)
             },
             child: const Text("Cancel"),
           ),
@@ -413,16 +429,18 @@ void _showWalkInQuestion() {
       _walkInTriggered = false;
       _walkInActive = false;
     });
-    Navigator.of(context).pop();// close current game page that is open
+    Navigator.of(context).pop(); // close current game page that is open
     //Navigate to fresh game page instance
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => const GamePage()),
     );
   }
+
   void _startQuestionTimer() {
     _animationController.reset();
     _animationController.forward();
   }
+
   void _resetForNextRing() {
     setState(() {
       _ringingStation = -1;
@@ -431,7 +449,8 @@ void _showWalkInQuestion() {
       _walkInTriggered = false;
     });
     scheduleNextRing();
-  } 
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -442,49 +461,57 @@ void _showWalkInQuestion() {
             icon: const Icon(Icons.refresh),
             onPressed: _restartGame, // Restart the game
           ),
-        ],),
+        ],
+      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           // Display XP, Lives, and Level
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.flash_on, color: Colors.yellow), // Lightning Icon for XP
-                  const SizedBox(width: 4), // Spacing
-                  Text(
-                    'XP: $_xp',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  const Icon(Icons.favorite, color: Colors.red), // Heart Icon for Lives
-                  const SizedBox(width: 4), // Spacing
-                  Text(
-                    'Lives: $_lives',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  const Icon(Icons.star, color: Colors.blue), // Star Icon for Level (you can choose another icon)
-                  const SizedBox(width: 4), // Spacing
-                  Text(
-                    'Difficulty: ${difficultyNames[_level] ?? 'Unknown'}',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ],
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.flash_on,
+                        color: Colors.yellow), // Lightning Icon for XP
+                    const SizedBox(width: 4), // Spacing
+                    Text(
+                      'XP: $_xp',
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Icon(Icons.favorite,
+                        color: Colors.red), // Heart Icon for Lives
+                    const SizedBox(width: 4), // Spacing
+                    Text(
+                      'Lives: $_lives',
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Icon(Icons.star,
+                        color: Colors
+                            .blue), // Star Icon for Level (you can choose another icon)
+                    const SizedBox(width: 4), // Spacing
+                    Text(
+                      'Difficulty: ${difficultyNames[_level] ?? 'Unknown'}',
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
           const Text(
             'Click the ringing station to answer the call!',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
