@@ -49,6 +49,7 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
     "What is the first step to solve password issues?",
     "What should you do if the projector in your classroom is not working?",
     "What should you do if the printer is not printing?",
+    "How can I connect to the zoom meeting?",
   ];
   final List<List<String>> dummyAnswers = [
     ["Restart", "Call support", "Check cables"],
@@ -56,9 +57,11 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
     ["Restart the router", "Call IT", "Reboot computer"],
     ["Contact help desk","Restart computer","Check caps lock"],
     ["Check cables","Restart the system","Call IT"],
-    ["Check ink levels","Check network","Call IT desk"]
+    ["Check ink levels","Check network","Call IT desk"],
+    ["Use white Cisco panel","login using PC","Call zoom support"]
   ];
-  final List<String> correctAnswers = ["Restart", "Scan for viruses", "Restart the router","Check caps lock","Call IT","Check network"];
+
+  final List<String> correctAnswers = ["Restart", "Scan for viruses", "Restart the router","Check caps lock","Call IT","Check network", "Use white Cisco panel"];
 
   late AnimationController _animationController;
   bool _walkInActive = false;

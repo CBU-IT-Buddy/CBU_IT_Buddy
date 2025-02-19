@@ -1,6 +1,5 @@
 import 'dart:async'; // Import Timer
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/chat_bubbles.dart';
 import '../helpers/chatbot_helper.dart';
 import '../services/bible_service.dart';
