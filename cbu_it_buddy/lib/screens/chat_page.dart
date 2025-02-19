@@ -1,6 +1,5 @@
 import 'dart:async'; // Import Timer
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/chat_bubbles.dart';
 import '../helpers/chatbot_helper.dart';
 import '../services/bible_service.dart';
@@ -9,7 +8,7 @@ import '../widgets/option_card.dart';
 class ChatPage extends StatefulWidget {
   final String query;
 
-  const ChatPage({Key? key, required this.query}) : super(key: key);
+  const ChatPage({super.key, required this.query});
 
   @override
   _ChatPageState createState() => _ChatPageState();

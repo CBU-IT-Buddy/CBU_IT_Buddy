@@ -17,8 +17,8 @@ class FAQPage extends StatelessWidget {
         backgroundColor: Colors.blueAccent, // Sets a nice blue accent color
       ),
       body: const Padding(
-        padding: EdgeInsets.all(16.0),
-        child: FAQList(),
+        padding: EdgeInsets.all(16.0), // Padding around the FAQList
+        child: FAQList(), // Display FAQList widget
       ),
     );
   }

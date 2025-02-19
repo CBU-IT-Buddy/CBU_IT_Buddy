@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'services/firebase_options.dart';
-import 'widgets/app_bar.dart'; // Custom AppBar file import
+// Custom AppBar file import
 //import 'home_page.dart'; // HomePage file import (New Chat)
 import 'services/feedback_page.dart'; // Feedback Page
 import 'screens/faq_page.dart'; // Frequently Asked Q&A Page
@@ -17,7 +17,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(CBUITBuddyApp());
+  runApp(const CBUITBuddyApp());
 }
 
 //////////////////////////////////////////////
