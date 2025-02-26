@@ -1,7 +1,7 @@
-import os
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+from google.auth import exceptions
 
 ##########################################################
 # HOW TO USE THIS SCRIPT
@@ -11,12 +11,9 @@ from firebase_admin import firestore
 # 4. Select document from list
 ##########################################################
 
-# Initialize Firestore
 cred = credentials.Certificate("keys/cbu-it-buddy-2d42e936a39c.json")
 firebase_admin.initialize_app(cred)
-
-# Initialize Firestore client
-db = firestore.Client()
+db = firestore.client()
 
 # Reference the collections
 collections = {
