@@ -30,14 +30,17 @@ class HintDialog extends StatefulWidget {
   final int correctStation;
   final Function onHintCompleted;
 
-  const HintDialog(
-      {super.key, required this.correctStation, required this.onHintCompleted});
+  const HintDialog({
+    super.key,
+    required this.correctStation,
+    required this.onHintCompleted,
+  });
 
   @override
-  _HintDialogState createState() => _HintDialogState();
+  HintDialogState createState() => HintDialogState();
 }
 
-class _HintDialogState extends State<HintDialog>
+class HintDialogState extends State<HintDialog>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Offset> _animation;
@@ -55,17 +58,18 @@ class _HintDialogState extends State<HintDialog>
       duration: const Duration(seconds: 2),
     );
 
-    // Animate character from random position to the correct station
+    // Animate character from random position to the center
     _animation = Tween<Offset>(
       begin: Offset(_random.nextDouble() * 2 - 1, _random.nextDouble() * 2 - 1),
-      end: const Offset(0, 0), // Move towards the center of the screen
+      end: const Offset(0, 0), // Move towards the center of the dialog
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
-    // Start the animation and proceed with the game once the hint is completed
+    // Start the animation and close the dialog before proceeding
     _controller.forward().whenComplete(() {
-      // Hint is done, callback to resume game
       Future.delayed(const Duration(seconds: 1), () {
-        widget.onHintCompleted(); // Continue after hint
+        Navigator.of(context).pop(); // Close the hint dialog
+        widget
+            .onHintCompleted(); // Continue with the game (e.g., show feedback)
       });
     });
   }
@@ -90,8 +94,13 @@ class _HintDialogState extends State<HintDialog>
             const Center(child: Text("Character giving a hint...")),
             SlideTransition(
               position:
-                  _animation, // Position of the character based on the animation
-              child: const Icon(Icons.person, size: 50), // Character icon
+                  _animation, // Position of the character based on animation
+              child: Image.asset(
+                'assets/images/hint_character.png', // Shrek-like character
+                width: 50,
+                height: 50,
+                fit: BoxFit.contain, // Ensure the image fits within bounds
+              ),
             ),
           ],
         ),
