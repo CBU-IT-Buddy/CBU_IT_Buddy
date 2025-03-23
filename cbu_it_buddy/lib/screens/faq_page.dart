@@ -1,3 +1,4 @@
+import 'package:cbu_it_buddy/main.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart'; // Used for opening links
@@ -14,7 +15,7 @@ class FAQPage extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold), // Stylish app bar title
         ),
         centerTitle: true,
-        backgroundColor: Colors.blueAccent, // Sets a nice blue accent color
+        backgroundColor: cbuNavyBlue, // Sets a nice blue accent color
       ),
       body: const Padding(
         padding: EdgeInsets.all(16.0),
@@ -98,7 +99,7 @@ class _FAQTileState extends State<FAQTile> {
             fontSize: 18,
           ),
         ),
-        iconColor: Colors.blueAccent, // Sets the expand/collapse arrow color
+        iconColor: cbuNavyBlue, // Sets the expand/collapse arrow color
         collapsedIconColor: Colors.grey, // Grey icon when collapsed
         onExpansionChanged: (expanded) {
           setState(() {
@@ -131,7 +132,7 @@ class _FAQTileState extends State<FAQTile> {
                     icon: const Icon(Icons.open_in_new, size: 18), // Open link icon
                     label: const Text("Read More"),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent, // Blue button
+                      backgroundColor: cbuNavyBlue, // Blue button
                       foregroundColor: Colors.white, // White text
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8), // Rounded button corners

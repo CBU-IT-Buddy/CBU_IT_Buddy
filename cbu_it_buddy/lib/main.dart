@@ -10,6 +10,11 @@ import 'screens/game_page.dart'; // IT Office Game page import
 import 'screens/chat_page.dart'; // Import the new ChatPage
 
 //////////////////////////////////////////////
+// Define CBU's Navy Blue as a constant
+//////////////////////////////////////////////
+const Color cbuNavyBlue = Color(0xFF002554); // Hex: #002554
+
+//////////////////////////////////////////////
 // Main function to run the app
 //////////////////////////////////////////////
 void main() async {
@@ -31,10 +36,34 @@ class CBUITBuddyApp extends StatelessWidget {
     return MaterialApp(
       title: 'CBU IT Buddy',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch:createMaterialColor(cbuNavyBlue),
+        appBarTheme: AppBarTheme(
+          backgroundColor: cbuNavyBlue,
+          foregroundColor: Colors.white,
+        ),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: cbuNavyBlue,
+          primary: cbuNavyBlue,
+        ),
       ),
       home: const MainPage(), // Set the main page with navigation drawer
     );
+  }
+  MaterialColor createMaterialColor(Color color) {
+    List<double> strengths = <double>[.05, .1, .2, .3, .4, .5, .6, .7, .8, .9];
+    Map<int, Color> swatch = <int, Color>{};
+    final int r = color.red, g = color.green, b = color.blue;
+
+    for (var strength in strengths) {
+      final double ds = 0.5 - strength;
+      swatch[(strength * 1000).round()] = Color.fromRGBO(
+        r + ((ds < 0 ? r : (255 - r)) * ds).round(),
+        g + ((ds < 0 ? g : (255 - g)) * ds).round(),
+        b + ((ds < 0 ? b : (255 - b)) * ds).round(),
+        1,
+      );
+    }
+    return MaterialColor(color.value, swatch);
   }
 }
 
@@ -65,11 +94,11 @@ class _MainPageState extends State<MainPage> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
+            DrawerHeader(
+              decoration: const BoxDecoration(
+                color: cbuNavyBlue,
               ),
-              child: Text(
+              child: const Text(
                 'User Selection',
                 style: TextStyle(color: Colors.white, fontSize: 24),
               ),
