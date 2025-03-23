@@ -37,7 +37,7 @@ class FAQList extends StatelessWidget {
           return const Center(child: CircularProgressIndicator()); // Shows loading animation
         }
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text("No FAQs available", style: TextStyle(fontSize: 18)));
+          return const Center(child: Text("No FAQs available", style: TextStyle(fontSize: 18, color: cbuNavyBlue)));
         }
 
         var faqItems = snapshot.data!.docs;
@@ -83,7 +83,7 @@ class _FAQTileState extends State<FAQTile> {
         borderRadius: BorderRadius.circular(12), // Rounded corners
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1), // Subtle shadow effect
+            color: cbuNavyBlue.withOpacity(0.1), // Subtle shadow effect
             blurRadius: 6,
             spreadRadius: 2,
           ),
@@ -97,10 +97,11 @@ class _FAQTileState extends State<FAQTile> {
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
+            color: cbuNavyBlue, // FAQ title style
           ),
         ),
         iconColor: cbuNavyBlue, // Sets the expand/collapse arrow color
-        collapsedIconColor: Colors.grey, // Grey icon when collapsed
+        collapsedIconColor: cbuNavyBlue, // Grey icon when collapsed
         onExpansionChanged: (expanded) {
           setState(() {
             isExpanded = expanded; // Toggle expanded state
@@ -114,7 +115,7 @@ class _FAQTileState extends State<FAQTile> {
               children: [
                 Text(
                   widget.content,
-                  style: TextStyle(fontSize: 16, color: Colors.grey[800]), // FAQ content style
+                  style: TextStyle(fontSize: 16, color: cbuNavyBlue), // FAQ content style
                 ),
                 const SizedBox(height: 12),
                 Center(
@@ -125,7 +126,7 @@ class _FAQTileState extends State<FAQTile> {
                         await launchUrl(url);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Could not open link")),
+                          const SnackBar(content: Text("Could not open link", style: TextStyle(color: Colors.white))),
                         );
                       }
                     },
