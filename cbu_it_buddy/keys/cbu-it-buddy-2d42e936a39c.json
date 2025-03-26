@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "cbu-it-buddy",
+  "private_key_id": "2d42e936a39cc332900490fffb0206a38ad3acb3",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDWUi61FHlY53je\noW+MjEGsA/2y31htqcPfpjBzL5pbfUHfq/6U+/lberO4k25AEp+n8yKeL+yRUbdP\nqlo3ho/1pIr7Rplwr/IeBXuj+BIxCkTetb/qzo8JByx1sFbRFT6Fx+s9e92pGgmb\n1PtU5xeO12W9uZiEMqkQ9e5liEJdm6LLGqjS9dGNDpVK6UylZwOXUR71duNo0QZa\nvAAKuuGP1oOkmF97zgz38K7Bl8mjESWrTjp8K/q/5SepvdO+kb8OdSrAUH5OP+mG\ngLzO/AzsfniEDTzFjZfWGGCl8ah1ZaS4Su0dpFqFs3DyRn2Ypk832+3rY0UykyMG\nHCGtVZKHAgMBAAECggEADebYxsAkOuMQ0QgRr0EtxVWg8ChSmRJo9SnXfLE6xvJy\nAmsqoUlS3F8yJyfQ//D1UDSSK0aahraROGapYW6mCd35ceEbdNbE0rOyWGlv7KRo\n4TVS1I0/c+t2M9ATYY6KNq1IEf3l2+EnfGctQk2XFpncLJlMTk7m7oW1R/q1q1Kd\nrLzwFMwwDxyOncfoQK1tZGD4BZQ4/+vl/lKzAjcn4YPtZSb5NKcStkKVMSdSrzka\nmQs3xirVOEmNsB6hk59ykYLRUZZhNhLBWOtEUBMlOVQpuMjSs475PxnN31PHnV9B\nVZMStVetRkysRRs2vzRKxlS1RVWEOwcwOxy8NDJpyQKBgQDzZsftERjFmC5UAejs\nBBVY3W8d7gpXhUPg6xwcbd1pe7qELaLPzFrjRW6J+Kko8YlhNpo3+NYxjdMmjF30\nzZSDCMlelO3UknQiVtkq1GmVQU55xEdTmYHVjw18GwB++qQHkGauhqn4OXL5scdi\nthfeF67M4mGKDpaAf22+hyx3bQKBgQDhahFIsM4AA8YTQYClfOeNlzvj2VcSp7Kb\n4K2ZfFX3OaOANnCxIW6A/3QGVDFNX/GGx9HFH9+b14Lroq9SIQtQj1+gyS7TI3BG\n3+KDQ6cqYF6abIPCPwkAHsBmnMnXVCmSv3GRAehXN/XgtmFdWAukk8WSnBRdlZlQ\njAr9BKP1QwKBgBiPdXsJb5t4qKwXaT5vhwvphC3b+DUuoFPQxYxk1aOwNXji9fvL\n3hvyxJ2tdrxH6xnhHZyqQkrLydOo9E4gdGzodRFTK9B4WrmgU9eLiX/jEB0fXick\nZUJ8ZdrxCpLFjcmpm4Le2cXPXjet5bWjNDNX5m6MJVV99VfQA+3my+jdAoGAGTjK\nCE0oL548eokYwOuR6Sjj3aHC+WZkOMbSBduArvH3FnCA+YDZIXvz2oVvIs46cy9G\njHz9gy2BC6afYVwrLO9t7sqz/5H2jSed67wVJ0uzKio8L+7nrejC9HhUqVBUeoQL\nTANfoOq1C1i82jnwy5BxSe9G5BXKGtYgoKD1S4sCgYAF+Mo2JOU5NvdYlV7as/mC\nhDq47JY+5Bd4dkz00sVDfqt/9R1S14q1r0jbFYgdVjYFSyH/OPNFnLErBVoiloeO\nP5v5ZyffJFNF2whx5R1oOCHmVt9oqj1EBBWO7tmPerZ+48yDElv1HLoSBHeu2zgg\nLwwbrVwfD9OEMVbhZ1/VXA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "itb-admin@cbu-it-buddy.iam.gserviceaccount.com",
+  "client_id": "110322951927034206449",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/itb-admin%40cbu-it-buddy.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

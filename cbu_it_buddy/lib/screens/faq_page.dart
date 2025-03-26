@@ -1,3 +1,4 @@
+import 'package:cbu_it_buddy/main.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart'; // Used for opening links
@@ -14,7 +15,7 @@ class FAQPage extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold), // Stylish app bar title
         ),
         centerTitle: true,
-        backgroundColor: Colors.blueAccent, // Sets a nice blue accent color
+        backgroundColor: cbuNavyBlue, // Sets a nice blue accent color
       ),
       body: const Padding(
         padding: EdgeInsets.all(16.0), // Padding around the FAQList
@@ -36,7 +37,7 @@ class FAQList extends StatelessWidget {
           return const Center(child: CircularProgressIndicator()); // Shows loading animation
         }
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text("No FAQs available", style: TextStyle(fontSize: 18)));
+          return const Center(child: Text("No FAQs available", style: TextStyle(fontSize: 18, color: cbuNavyBlue)));
         }
 
         var faqItems = snapshot.data!.docs;
@@ -82,7 +83,7 @@ class _FAQTileState extends State<FAQTile> {
         borderRadius: BorderRadius.circular(12), // Rounded corners
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1), // Subtle shadow effect
+            color: cbuNavyBlue.withOpacity(0.1), // Subtle shadow effect
             blurRadius: 6,
             spreadRadius: 2,
           ),
@@ -96,10 +97,11 @@ class _FAQTileState extends State<FAQTile> {
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
+            color: cbuNavyBlue, // FAQ title style
           ),
         ),
-        iconColor: Colors.blueAccent, // Sets the expand/collapse arrow color
-        collapsedIconColor: Colors.grey, // Grey icon when collapsed
+        iconColor: cbuNavyBlue, // Sets the expand/collapse arrow color
+        collapsedIconColor: cbuNavyBlue, // Grey icon when collapsed
         onExpansionChanged: (expanded) {
           setState(() {
             isExpanded = expanded; // Toggle expanded state
@@ -113,7 +115,7 @@ class _FAQTileState extends State<FAQTile> {
               children: [
                 Text(
                   widget.content,
-                  style: TextStyle(fontSize: 16, color: Colors.grey[800]), // FAQ content style
+                  style: TextStyle(fontSize: 16, color: cbuNavyBlue), // FAQ content style
                 ),
                 const SizedBox(height: 12),
                 Center(
@@ -124,14 +126,14 @@ class _FAQTileState extends State<FAQTile> {
                         await launchUrl(url);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Could not open link")),
+                          const SnackBar(content: Text("Could not open link", style: TextStyle(color: Colors.white))),
                         );
                       }
                     },
                     icon: const Icon(Icons.open_in_new, size: 18), // Open link icon
                     label: const Text("Read More"),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent, // Blue button
+                      backgroundColor: cbuNavyBlue, // Blue button
                       foregroundColor: Colors.white, // White text
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8), // Rounded button corners
