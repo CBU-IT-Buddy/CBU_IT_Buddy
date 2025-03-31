@@ -10,9 +10,13 @@ class FAQPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Frequently Asked Questions',
-          style: TextStyle(fontWeight: FontWeight.bold), // Stylish app bar title
+        title: Transform.translate(
+          offset: const Offset(0, -17), // Moves text 5 pixels up
+          child: const Text(
+            'Frequently Asked Questions',
+            style:
+                TextStyle(fontWeight: FontWeight.bold), // Stylish app bar title
+          ),
         ),
         centerTitle: true,
         backgroundColor: cbuNavyBlue, // Sets a nice blue accent color
@@ -34,10 +38,13 @@ class FAQList extends StatelessWidget {
       stream: FirebaseFirestore.instance.collection('faq').snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator()); // Shows loading animation
+          return const Center(
+              child: CircularProgressIndicator()); // Shows loading animation
         }
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text("No FAQs available", style: TextStyle(fontSize: 18, color: cbuNavyBlue)));
+          return const Center(
+              child: Text("No FAQs available",
+                  style: TextStyle(fontSize: 18, color: cbuNavyBlue)));
         }
 
         var faqItems = snapshot.data!.docs;
@@ -63,7 +70,11 @@ class FAQTile extends StatefulWidget {
   final String content;
   final String link;
 
-  const FAQTile({required this.title, required this.content, required this.link, super.key});
+  const FAQTile(
+      {required this.title,
+      required this.content,
+      required this.link,
+      super.key});
 
   @override
   _FAQTileState createState() => _FAQTileState();
@@ -75,7 +86,8 @@ class _FAQTileState extends State<FAQTile> {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 300), // Smooth animation when expanding
+      duration:
+          const Duration(milliseconds: 300), // Smooth animation when expanding
       curve: Curves.easeInOut,
       margin: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
@@ -91,7 +103,9 @@ class _FAQTileState extends State<FAQTile> {
       ),
       child: ExpansionTile(
         tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), // Matches container radius
+        shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(12)), // Matches container radius
         title: Text(
           widget.title,
           style: const TextStyle(
@@ -115,7 +129,8 @@ class _FAQTileState extends State<FAQTile> {
               children: [
                 Text(
                   widget.content,
-                  style: TextStyle(fontSize: 16, color: cbuNavyBlue), // FAQ content style
+                  style: const TextStyle(
+                      fontSize: 16, color: cbuNavyBlue), // FAQ content style
                 ),
                 const SizedBox(height: 12),
                 Center(
@@ -126,17 +141,21 @@ class _FAQTileState extends State<FAQTile> {
                         await launchUrl(url);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Could not open link", style: TextStyle(color: Colors.white))),
+                          const SnackBar(
+                              content: Text("Could not open link",
+                                  style: TextStyle(color: Colors.white))),
                         );
                       }
                     },
-                    icon: const Icon(Icons.open_in_new, size: 18), // Open link icon
+                    icon: const Icon(Icons.open_in_new,
+                        size: 18), // Open link icon
                     label: const Text("Read More"),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: cbuNavyBlue, // Blue button
                       foregroundColor: Colors.white, // White text
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8), // Rounded button corners
+                        borderRadius:
+                            BorderRadius.circular(8), // Rounded button corners
                       ),
                     ),
                   ),

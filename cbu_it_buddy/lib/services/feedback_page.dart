@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class FeedbackPage extends StatefulWidget {
-  const FeedbackPage({Key? key}) : super(key: key);
+  const FeedbackPage({super.key});
 
   @override
   _FeedbackPageState createState() => _FeedbackPageState();
@@ -39,8 +39,10 @@ class _FeedbackPageState extends State<FeedbackPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Feedback Page'),
-        centerTitle: true, // Center-align the AppBar title
+        title: Transform.translate(
+          offset: const Offset(0, -17), // Moves text 5 pixels up
+          child: const Text("Feedback"),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

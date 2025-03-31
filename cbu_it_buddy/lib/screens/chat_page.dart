@@ -9,7 +9,7 @@ import '../widgets/option_card.dart';
 class ChatPage extends StatefulWidget {
   final String query;
 
-  const ChatPage({Key? key, required this.query}) : super(key: key);
+  const ChatPage({super.key, required this.query});
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -77,7 +77,10 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("IT-Buddy"),
+        title: Transform.translate(
+          offset: const Offset(0, -17), // Moves text 5 pixels up
+          child: const Text("IT-Buddy"),
+        ),
       ),
       body: Column(
         children: [

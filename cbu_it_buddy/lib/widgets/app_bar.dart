@@ -9,7 +9,10 @@ AppBar buildAppBar(BuildContext context) {
     //////////////////////////////////////////////
     // Title for the AppBar (centered)
     //////////////////////////////////////////////
-    title: const Text("CBU-IT-Buddy"),
+    title: Transform.translate(
+      offset: const Offset(0, -20), // Moves text 5 pixels up
+      child: const Text("CBU-IT-Buddy"),
+    ),
     centerTitle: true,
 
     //////////////////////////////////////////////
