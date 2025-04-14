@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-final int maxSeconds = 60;
+const int maxSeconds = 60;
 bool timerEnd = false;
 
 class GameTimer extends StatefulWidget {
@@ -22,7 +22,7 @@ class _GameTimerState extends State<GameTimer> {
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         _seconds++;
         if (_seconds >= maxSeconds) {
@@ -49,7 +49,7 @@ class _GameTimerState extends State<GameTimer> {
   Widget build(BuildContext context) {
     return Text(
       _formatTime(_seconds),
-      style: TextStyle(
+      style: const TextStyle(
         color: Colors.black,
         fontSize: 24,
         fontWeight: FontWeight.bold,

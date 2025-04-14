@@ -8,10 +8,7 @@ import 'gametimer.dart';
 class GameEndScreen extends StatelessWidget {
   final VoidCallback onExit;
 
-  const GameEndScreen({
-    Key? key, 
-    required this.onExit
-  }) : super(key: key);
+  const GameEndScreen({super.key, required this.onExit});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +35,8 @@ class GameEndScreen extends StatelessWidget {
               onPressed: onExit,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
               ),
               child: const Text(
                 'Exit',
@@ -57,7 +55,7 @@ class GameEndScreen extends StatelessWidget {
 
 // Make GameView a separate widget that can be embedded anywhere
 class GameView extends StatefulWidget {
-  GameView({Key? key}) : super(key: key);
+  const GameView({super.key});
 
   @override
   State<GameView> createState() => _GameViewState();
@@ -152,8 +150,8 @@ class _GameViewState extends State<GameView> {
 
 // Keep your original GameApp for standalone use
 class GameApp extends StatelessWidget {
-  GameApp({super.key});
-  
+  const GameApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

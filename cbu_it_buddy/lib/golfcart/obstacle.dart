@@ -1,11 +1,11 @@
 import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
-import 'package:flutter/material.dart';
 import 'player.dart';
 import 'golfcartgame.dart';
 import 'constants.dart';
 
-class Obstacle extends SpriteComponent with CollisionCallbacks, HasGameRef<GolfCartGame> {
+class Obstacle extends SpriteComponent
+    with CollisionCallbacks, HasGameRef<GolfCartGame> {
   double speed = obstacleSpeed1;
   final String spritePath;
 

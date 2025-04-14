@@ -8,7 +8,7 @@ import '../widgets/option_card.dart';
 class ChatPage extends StatefulWidget {
   final String query;
 
-  const ChatPage({super.key, required this.query});
+  const ChatPage({Key? key, required this.query}) : super(key: key);
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -32,8 +32,10 @@ class _ChatPageState extends State<ChatPage> {
 
     // Display the first message with the Bible verse
     setState(() {
-      _chatMessages.add(
-          {"message": "Verse of the day:\n\n$verse", "isUserMessage": false});
+      _chatMessages.add({
+        "message": "Verse of the day:\n\n$verse",
+        "isUserMessage": false,
+      });
     });
 
     // Add a 2-second delay for the follow-up message
@@ -41,7 +43,7 @@ class _ChatPageState extends State<ChatPage> {
       setState(() {
         _chatMessages.add({
           "message": "Is there anything I can help you with today?",
-          "isUserMessage": false
+          "isUserMessage": false,
         });
       });
     });
@@ -65,6 +67,8 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
+  // Duplicate method removed
+
   @override
   void dispose() {
     _focusNode.dispose();
@@ -78,82 +82,101 @@ class _ChatPageState extends State<ChatPage> {
       appBar: AppBar(
         toolbarHeight: 30.0,
         centerTitle: true,
-        title: const Text( "IT-Buddy",
-    style: TextStyle(
-      fontWeight: FontWeight.bold, // Make the font bold
-    ),
-  ),
-),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              reverse: true,
-              itemCount: _chatMessages.length,
-              itemBuilder: (context, index) {
-                final messageData =
-                    _chatMessages[_chatMessages.length - 1 - index];
-                return ChatBubble(
-                  message: messageData['message'],
-                  isUserMessage: messageData['isUserMessage'],
-                );
-              },
-            ),
+        title: const Text(
+          "IT-Buddy",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
           ),
-          if (!_hasSubmittedMessage)
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6.0),
-                child: Row(
-                  children: [
-                    const SizedBox(width: 16.0),
-                    OptionCard(
-                      title: "Reset Password",
-                      subtitle: "All Accounts",
-                      onTap: () => _submitQuickMessage("Reset Password"),
-                    ),
-                    OptionCard(
-                      title: "Reset MFA",
-                      subtitle: "Microsoft Authenticator, phone number",
-                      onTap: () => _submitQuickMessage("Reset MFA"),
-                    ),
-                    OptionCard(
-                      title: "WiFi - Problems",
-                      subtitle: "CBU-SECURE, CBU...",
-                      onTap: () => _submitQuickMessage("WiFi - Problems"),
-                    ),
-                    const SizedBox(width: 16.0),
-                  ],
-                ),
+        ),
+      ),
+      // Use Stack to overlay the background image behind chat content
+      body: Stack(
+        children: [
+          // Background image positioned higher using Align
+          Align(
+            alignment: Alignment.topCenter, // Move the image to the top center
+            child: Opacity(
+              opacity: 0.10, // Adjust opacity to your preference
+              child: Image.asset(
+                'assets/images/CBU_Buddy_Logo.png',
+                fit: BoxFit.contain,
+                // Optionally, add width and height constraints, e.g. width: 200, height: 200
               ),
             ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    focusNode: _focusNode,
-                    controller: _textController,
-                    decoration: InputDecoration(
-                      hintText: "Enter a prompt here...",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 16.0),
+          ),
+          // Chat content on top of the background image
+          Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  reverse: true,
+                  itemCount: _chatMessages.length,
+                  itemBuilder: (context, index) {
+                    final messageData =
+                        _chatMessages[_chatMessages.length - 1 - index];
+                    return ChatBubble(
+                      message: messageData['message'],
+                      isUserMessage: messageData['isUserMessage'],
+                    );
+                  },
+                ),
+              ),
+              if (!_hasSubmittedMessage)
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6.0),
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 16.0),
+                        OptionCard(
+                          title: "Reset Password",
+                          subtitle: "All Accounts",
+                          onTap: () => _submitQuickMessage("Reset Password"),
+                        ),
+                        OptionCard(
+                          title: "Reset MFA",
+                          subtitle: "Microsoft Authenticator, phone number",
+                          onTap: () => _submitQuickMessage("Reset MFA"),
+                        ),
+                        OptionCard(
+                          title: "WiFi - Problems",
+                          subtitle: "CBU-SECURE, CBU...",
+                          onTap: () => _submitQuickMessage("WiFi - Problems"),
+                        ),
+                        const SizedBox(width: 16.0),
+                      ],
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
-                IconButton(
-                  icon: const Icon(Icons.send,
-                      color: Color.fromARGB(255, 11, 54, 90)),
-                  onPressed: _handleSubmitMessage,
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        focusNode: _focusNode,
+                        controller: _textController,
+                        decoration: InputDecoration(
+                          hintText: "Enter a prompt here...",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          contentPadding:
+                              const EdgeInsets.symmetric(horizontal: 16.0),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    IconButton(
+                      icon: const Icon(Icons.send,
+                          color: Color.fromARGB(255, 11, 54, 90)),
+                      onPressed: _handleSubmitMessage,
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),

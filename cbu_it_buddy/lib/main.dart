@@ -37,10 +37,10 @@ class CBUITBuddyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'CBU IT Buddy',
-      debugShowCheckedModeBanner: false, 
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch:createMaterialColor(cbuNavyBlue),
-        appBarTheme: AppBarTheme(
+        primarySwatch: createMaterialColor(cbuNavyBlue),
+        appBarTheme: const AppBarTheme(
           backgroundColor: cbuNavyBlue,
           foregroundColor: Colors.white,
         ),
@@ -52,6 +52,7 @@ class CBUITBuddyApp extends StatelessWidget {
       home: const MainPage(), // Set the main page with navigation drawer
     );
   }
+
   MaterialColor createMaterialColor(Color color) {
     List<double> strengths = <double>[.05, .1, .2, .3, .4, .5, .6, .7, .8, .9];
     Map<int, Color> swatch = <int, Color>{};
@@ -97,11 +98,11 @@ class _MainPageState extends State<MainPage> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            DrawerHeader(
-              decoration: const BoxDecoration(
+            const DrawerHeader(
+              decoration: BoxDecoration(
                 color: cbuNavyBlue,
               ),
-              child: const Text(
+              child: Text(
                 'User Selection',
                 style: TextStyle(color: Colors.white, fontSize: 24),
               ),
@@ -156,7 +157,7 @@ class _MainPageState extends State<MainPage> {
                 Navigator.pop(context); // Close the drawer
               },
             ),
-             ListTile(
+            ListTile(
               leading: const Icon(Icons.videogame_asset),
               title: const Text('Golfcart Game'),
               onTap: () {

@@ -21,11 +21,10 @@ class ObstaclePattern {
   final double difficultyRating; // 0.0 to 1.0 where 1.0 is hardest
   final String name;
 
-  const ObstaclePattern({
-    required this.laneConfigurations, 
-    required this.difficultyRating,
-    required this.name
-  });
+  const ObstaclePattern(
+      {required this.laneConfigurations,
+      required this.difficultyRating,
+      required this.name});
 }
 
 enum GameState { GAME, END }
@@ -41,7 +40,8 @@ class GolfCartGame extends FlameGame with HasCollisionDetection {
   double speed = speed1;
   final LaneManager laneManager = LaneManager();
   double timeSinceLastSpawn = 0.0;
-  final double spawnInterval = 0.5; // seconds, adjusted for more frequent spawning
+  final double spawnInterval =
+      0.5; // seconds, adjusted for more frequent spawning
   double gameTime = 0.0;
   int obstaclesToSpawn = 2;
   double timeSinceLastIncrease = 0.0;
@@ -49,14 +49,17 @@ class GolfCartGame extends FlameGame with HasCollisionDetection {
   final int maxObstacles = 6;
   final int minObstacles = 2; // Minimum number of obstacles to maintain
   final String obstacleSprite = 'obstacle.png'; // Updated path
-  final List<String> movingObstacleSprites = ['male_scooterR.png', 'female_scooterR.png']; // Updated paths
+  final List<String> movingObstacleSprites = [
+    'male_scooterR.png',
+    'female_scooterR.png'
+  ]; // Updated paths
   final String playerSprite = 'golfcart.png'; // Updated path
   final double playerWidth = 200;
   final double playerHeight = 260;
   final int difficultySpeedIncrease = 20;
   GameState gameState = GameState.GAME;
   bool timerEnd = false;
-  
+
   // Callback for notifying UI of game state changes
   void Function(GameState)? onGameStateChanged;
 
@@ -74,12 +77,12 @@ class GolfCartGame extends FlameGame with HasCollisionDetection {
 
     // Background
     streetBG = await loadParallaxComponent(
-    [ParallaxImageData('streetbg.jpg')],  // Updated path
-    repeat: ImageRepeat.repeatY,
-    baseVelocity: Vector2(0, -30),
-    velocityMultiplierDelta: Vector2(0, speed),
-    size: Vector2(gameWidth, gameHeight),
-    position: Vector2(0, 0),
+      [ParallaxImageData('streetbg.jpg')], // Updated path
+      repeat: ImageRepeat.repeatY,
+      baseVelocity: Vector2(0, -30),
+      velocityMultiplierDelta: Vector2(0, speed),
+      size: Vector2(gameWidth, gameHeight),
+      position: Vector2(0, 0),
     );
     add(streetBG);
 
@@ -118,7 +121,7 @@ class GolfCartGame extends FlameGame with HasCollisionDetection {
       showEndGameScreen();
     }
 
-    if (gameState == GameState.GAME) { 
+    if (gameState == GameState.GAME) {
       if (timeSinceLastIncrease >= increaseInterval) {
         obstaclesToSpawn = min(obstaclesToSpawn + 2, maxObstacles);
         // Obstacle.speed += difficultySpeedIncrease; // Increase obstacle speed
@@ -174,11 +177,13 @@ class GolfCartGame extends FlameGame with HasCollisionDetection {
     final random = Random();
 
     // Count the current number of MovingObstacle instances
-    final currentMovingObstacles = world.children.whereType<MovingObstacle>().length;
+    final currentMovingObstacles =
+        world.children.whereType<MovingObstacle>().length;
 
     if (currentMovingObstacles < 1) {
       final bool spawnFromLeft = random.nextBool();
-      final position = spawnFromLeft ? Vector2(lane1, topBound) : Vector2(lane3, topBound);
+      final position =
+          spawnFromLeft ? Vector2(lane1, topBound) : Vector2(lane3, topBound);
       final movingObstacle = MovingObstacle(
         position: position,
         size: Vector2(210, 210),
@@ -193,14 +198,15 @@ class GolfCartGame extends FlameGame with HasCollisionDetection {
     // Don't spawn power-ups if the player isn't initialized yet
     // or if the game is not in the right state
     if (gameState != GameState.GAME) {
-      debugPrint('Power-up spawn skipped: game state is not GAME or player not initialized');
+      debugPrint(
+          'Power-up spawn skipped: game state is not GAME or player not initialized');
       return;
     }
-    
+
     try {
       // Find lanes without obstacles
       List<int> availableLaneIndices = [];
-      
+
       // Check each lane to see if it has any obstacles
       for (int i = 0; i < lanes.length; i++) {
         double lanePosition = lanes[i];
@@ -208,24 +214,25 @@ class GolfCartGame extends FlameGame with HasCollisionDetection {
           availableLaneIndices.add(i);
         }
       }
-      
+
       // If all lanes have obstacles, don't spawn a power-up
       if (availableLaneIndices.isEmpty) {
         debugPrint('Power-up spawn skipped: all lanes have obstacles');
         return;
       }
-      
+
       // Pick a random lane from the available lanes
       final random = Random();
-      final laneIndex = availableLaneIndices[random.nextInt(availableLaneIndices.length)];
+      final laneIndex =
+          availableLaneIndices[random.nextInt(availableLaneIndices.length)];
       final lanePosition = lanes[laneIndex];
-      
+
       // Power-up size is defined as 60x60 in PowerUp class
-      final powerUpWidth = 60.0;
-      
+      const powerUpWidth = 60.0;
+
       // Center the power-up in the lane by offsetting it by half its width
       final centeredXPosition = lanePosition - (powerUpWidth / 2);
-      
+
       debugPrint('Spawning invincibility power-up in lane ${laneIndex + 1}');
       final position = Vector2(centeredXPosition, topBound);
       final powerUp = PowerUp(position: position);
@@ -241,7 +248,7 @@ class GolfCartGame extends FlameGame with HasCollisionDetection {
     if (onGameStateChanged != null) {
       onGameStateChanged!(GameState.END);
     }
-    
+
     // Optional: pause the game
     pauseEngine();
   }

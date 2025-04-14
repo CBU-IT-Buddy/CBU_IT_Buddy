@@ -6,7 +6,8 @@ class ChatbotHelper {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // 👇 New Together API Key
-  static const String _apiKey = '9f6e9a6b9e6e9b557e03a24132aea6b528449152e02dd8bcc3d541157686a592';
+  static const String _apiKey =
+      '9f6e9a6b9e6e9b557e03a24132aea6b528449152e02dd8bcc3d541157686a592';
   static const String _apiUrl = 'https://api.together.xyz/v1/chat/completions';
 
   // Toggle for testing
@@ -46,7 +47,8 @@ class ChatbotHelper {
     try {
       String normalizedQuestion = question.toLowerCase();
 
-      QuerySnapshot querySnapshot = await _firestore.collection('solutions').get();
+      QuerySnapshot querySnapshot =
+          await _firestore.collection('solutions').get();
       print("📄 Firestore documents fetched: ${querySnapshot.docs.length}");
 
       for (var doc in querySnapshot.docs) {
@@ -59,12 +61,15 @@ class ChatbotHelper {
         if (title.isEmpty) continue;
 
         String pattern = _buildRegexPattern(title);
-        print('🔍 Comparing question "$normalizedQuestion" with pattern "$pattern"');
+        print(
+            '🔍 Comparing question "$normalizedQuestion" with pattern "$pattern"');
 
-        RegExp regExp = RegExp(r'\b(?:' + pattern + r')\b', caseSensitive: false);
+        RegExp regExp =
+            RegExp(r'\b(?:' + pattern + r')\b', caseSensitive: false);
 
         if (regExp.hasMatch(normalizedQuestion)) {
-          String content = doc['summary'] ?? doc['content'] ?? 'No content available.';
+          String content =
+              doc['summary'] ?? doc['content'] ?? 'No content available.';
           String link = doc['link'] ?? '';
 
           return _formatResponse(title, content, link);
@@ -82,69 +87,69 @@ class ChatbotHelper {
   // 🤖 Get response from Together API
   ////////////////////////////////////////////////
   Future<String> _getTogetherResponse(String question) async {
-  try {
-    final headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $_apiKey',
-    };
+    try {
+      final headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $_apiKey',
+      };
 
-    QuerySnapshot querySnapshot = await _firestore.collection('solutions').get();
-    String relevantContent = '';
+      QuerySnapshot querySnapshot =
+          await _firestore.collection('solutions').get();
+      String relevantContent = '';
 
-    for (var doc in querySnapshot.docs) {
-      if (!doc.data().toString().contains('title')) continue;
+      for (var doc in querySnapshot.docs) {
+        if (!doc.data().toString().contains('title')) continue;
 
-      String title = doc['title']?.toString().toLowerCase() ?? '';
-      RegExp regExp = RegExp(r'\b(?:' + _buildRegexPattern(title) + r')\b', caseSensitive: false);
+        String title = doc['title']?.toString().toLowerCase() ?? '';
+        RegExp regExp = RegExp(r'\b(?:' + _buildRegexPattern(title) + r')\b',
+            caseSensitive: false);
 
-      if (regExp.hasMatch(question.toLowerCase())) {
-        relevantContent = doc['summary'] ?? doc['content'] ?? '';
-        break;
-      }
-    }
-
-    String userPrompt;
-
-    if (relevantContent.isNotEmpty) {
-      print("✅ Firestore context found. Sending enhanced prompt.");
-      userPrompt =
-          "Based on the following content, please summarize and format a solution for the user:\n\n$relevantContent\n\nUser's question: $question";
-    } else {
-      print("⚠️ No context found. Sending raw user question to Together.");
-      userPrompt = question;
-    }
-
-    final body = jsonEncode({
-      "model": "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8",
-      "messages": [
-        {
-          "role": "system",
-          "content": "You are a helpful assistant who specializes in IT support at a university."
-        },
-        {
-          "role": "user",
-          "content": userPrompt
+        if (regExp.hasMatch(question.toLowerCase())) {
+          relevantContent = doc['summary'] ?? doc['content'] ?? '';
+          break;
         }
-      ],
-      "temperature": 0.7,
-      "stream": false
-    });
+      }
 
-    final response = await http.post(Uri.parse(_apiUrl), headers: headers, body: body);
+      String userPrompt;
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return data['choices'][0]['message']['content'].trim();
-    } else {
-      print('❌ API Error: ${response.statusCode} - ${response.body}');
-      return "Sorry, I'm having trouble connecting to the assistant. Please try again later.";
+      if (relevantContent.isNotEmpty) {
+        print("✅ Firestore context found. Sending enhanced prompt.");
+        userPrompt =
+            "Based on the following content, please summarize and format a solution for the user:\n\n$relevantContent\n\nUser's question: $question";
+      } else {
+        print("⚠️ No context found. Sending raw user question to Together.");
+        userPrompt = question;
+      }
+
+      final body = jsonEncode({
+        "model": "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8",
+        "messages": [
+          {
+            "role": "system",
+            "content":
+                "You are a helpful assistant who specializes in IT support at a university."
+          },
+          {"role": "user", "content": userPrompt}
+        ],
+        "temperature": 0.7,
+        "stream": false
+      });
+
+      final response =
+          await http.post(Uri.parse(_apiUrl), headers: headers, body: body);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['choices'][0]['message']['content'].trim();
+      } else {
+        print('❌ API Error: ${response.statusCode} - ${response.body}');
+        return "Sorry, I'm having trouble connecting to the assistant. Please try again later.";
+      }
+    } catch (e) {
+      print('❌ Together API request failed: $e');
+      return "Sorry, something went wrong with the assistant.";
     }
-  } catch (e) {
-    print('❌ Together API request failed: $e');
-    return "Sorry, something went wrong with the assistant.";
   }
-}
-
 
   ////////////////////////////////////////
   // 🧾 Format chatbot response
@@ -155,7 +160,7 @@ class ChatbotHelper {
     buffer.writeln(content);
 
     if (link.isNotEmpty) {
-      buffer.writeln('\n[View Full Solution]($link)');
+      buffer.writeln('\nView Full Solution: ($link)');
     }
 
     return buffer.toString();

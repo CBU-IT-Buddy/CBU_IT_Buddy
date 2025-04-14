@@ -12,7 +12,8 @@ enum PlayerDirection { left, right, none }
 
 enum PlayerState { idle, moving }
 
-class Player extends SpriteComponent with HasGameRef<GolfCartGame>, CollisionCallbacks {
+class Player extends SpriteComponent
+    with HasGameRef<GolfCartGame>, CollisionCallbacks {
   // Variable declaration
   PlayerDirection playerDirection;
   double moveSpeed;
@@ -28,7 +29,7 @@ class Player extends SpriteComponent with HasGameRef<GolfCartGame>, CollisionCal
   int flashCount = 0; // Counter for flashing effect
   Sprite? originalSprite; // Store original sprite for flashing effect
   int lastDebugPrintTime = -1; // Track the last time debug print was made
-  
+
   // Variables for swipe down functionality
   bool isSwipingDown = false;
   double originalY = 0.0;
@@ -41,7 +42,8 @@ class Player extends SpriteComponent with HasGameRef<GolfCartGame>, CollisionCal
   final double _glowIntensity = 15.0; // Glow intensity for invincibility effect
   double _glowPulseTimer = 0.0; // Timer for pulsing glow effect
   final double _glowPulseDuration = 0.5; // How fast the glow pulses
-  double _currentGlowIntensity = 0.0; // Current intensity that changes over time
+  double _currentGlowIntensity =
+      0.0; // Current intensity that changes over time
 
   // Constructor
   Player({
@@ -52,10 +54,11 @@ class Player extends SpriteComponent with HasGameRef<GolfCartGame>, CollisionCal
     int initialLives = 3, // Initialize lives with a default value
     Color color = Colors.deepPurple,
   })  : lives = ValueNotifier<int>(initialLives), // Initialize ValueNotifier
-        playerDirection = PlayerDirection.none, // Initialize playerDirection here
+        playerDirection =
+            PlayerDirection.none, // Initialize playerDirection here
         moveSpeed = playerDelta, // Initialize moveSpeed
-        currentLaneIndex = 1, 
-        targetX = lanes[1], 
+        currentLaneIndex = 1,
+        targetX = lanes[1],
         super(
           position: position,
           anchor: Anchor.center,
@@ -76,7 +79,7 @@ class Player extends SpriteComponent with HasGameRef<GolfCartGame>, CollisionCal
     // Custom hitbox to occupy only the top 25% of the golf cart image
     final hitbox = RectangleHitbox.relative(
       Vector2(0.75, 0.15), // 75% width and 25% height of the sprite
-      position: Vector2(width / 8, 40), 
+      position: Vector2(width / 8, 40),
       parentSize: size,
     );
     add(hitbox);
@@ -89,9 +92,10 @@ class Player extends SpriteComponent with HasGameRef<GolfCartGame>, CollisionCal
     _updateFlashing(dt);
     _updateSwipeDown(dt);
     _updateGlowEffect(dt);
-    
+
     // Debug print for player move speed (only print occasionally to avoid console spam)
-    if (gameRef.gameTime.toInt() % 5 == 0 && gameRef.gameTime.floor() != lastDebugPrintTime) {
+    if (gameRef.gameTime.toInt() % 5 == 0 &&
+        gameRef.gameTime.floor() != lastDebugPrintTime) {
       debugPrint('Player moveSpeed: $moveSpeed');
       lastDebugPrintTime = gameRef.gameTime.floor();
     }
@@ -121,7 +125,7 @@ class Player extends SpriteComponent with HasGameRef<GolfCartGame>, CollisionCal
       }
     }
   }
-  
+
   void _updateSwipeDown(double dt) {
     if (isSwipingDown) {
       swipeDownTimer += dt;
@@ -140,8 +144,10 @@ class Player extends SpriteComponent with HasGameRef<GolfCartGame>, CollisionCal
       if (_glowPulseTimer >= _glowPulseDuration) {
         _glowPulseTimer = 0.0;
       }
-      _currentGlowIntensity = _glowIntensity * (0.5 + 0.5 * (1.0 - (_glowPulseTimer / _glowPulseDuration).abs()));
-      _glowPaint.maskFilter = MaskFilter.blur(BlurStyle.normal, _currentGlowIntensity);
+      _currentGlowIntensity = _glowIntensity *
+          (0.5 + 0.5 * (1.0 - (_glowPulseTimer / _glowPulseDuration).abs()));
+      _glowPaint.maskFilter =
+          MaskFilter.blur(BlurStyle.normal, _currentGlowIntensity);
     }
   }
 
@@ -170,7 +176,7 @@ class Player extends SpriteComponent with HasGameRef<GolfCartGame>, CollisionCal
       targetX = lanes[currentLaneIndex];
     }
   }
-  
+
   void onBrake() {
     if (!isSwipingDown) {
       debugPrint('Swipe Down');
@@ -189,7 +195,7 @@ class Player extends SpriteComponent with HasGameRef<GolfCartGame>, CollisionCal
 
   void startInvincibility() {
     isInvincible = true;
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () {
       isInvincible = false;
     });
   }
@@ -198,7 +204,7 @@ class Player extends SpriteComponent with HasGameRef<GolfCartGame>, CollisionCal
     if (isInvincible) {
       return; // If player is invincible, ignore the collision
     }
-    
+
     startFlashing();
 
     if (!isFlashing) {
@@ -221,17 +227,18 @@ class Player extends SpriteComponent with HasGameRef<GolfCartGame>, CollisionCal
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);
-    
+
     if (other is Obstacle || other is MovingObstacle) {
       // Only process collisions that happen near the front of the player
       bool isFrontCollision = false;
       for (final point in intersectionPoints) {
-        if (point.y <= position.y - size.y * 0.3) { // If point is in front third of player
+        if (point.y <= position.y - size.y * 0.3) {
+          // If point is in front third of player
           isFrontCollision = true;
           break;
         }
       }
-      
+
       if (isFrontCollision) {
         // If the player is invincible, don't handle the collision
         if (!isInvincible) {

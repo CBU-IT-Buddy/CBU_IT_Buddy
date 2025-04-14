@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/feedback_page.dart'; // Import the FeedbackPage
-import '../golfcart/gameapp.dart'; // Import the GameView widget
+// Import the GameView widget
 
 //////////////////////////////////////////////
 // Function to build the AppBar for the app
