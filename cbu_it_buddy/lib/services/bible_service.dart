@@ -7,7 +7,7 @@ class BibleService {
     try {
       final querySnapshot = await _firestore.collection('bibleverse').get();
       if (querySnapshot.docs.isNotEmpty) {
-        return querySnapshot.docs.first['verse'] ?? 'No verse available';
+        return querySnapshot.docs.first['text'] ?? 'No verse available';
       } else {
         return "No Bible verses available at the moment.";
       }
