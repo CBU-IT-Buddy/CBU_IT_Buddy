@@ -32,8 +32,8 @@ class _ChatPageState extends State<ChatPage> {
 
     // Display the first message with the Bible verse
     setState(() {
-      _chatMessages
-          .add({"message": "Hi Lancer!\n\n'$verse'", "isUserMessage": false});
+      _chatMessages.add(
+          {"message": "Verse of the day:\n\n$verse", "isUserMessage": false});
     });
 
     // Add a 2-second delay for the follow-up message
