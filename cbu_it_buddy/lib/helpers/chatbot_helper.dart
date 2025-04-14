@@ -4,154 +4,172 @@ import 'dart:convert';
 
 class ChatbotHelper {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  // API key for DeepSeek
-  static const String _apiKey = 'sk-be248f60c71b4e46b3f2ed553c315091';
-  static const String _apiUrl = 'https://api.deepseek.com/v1/chat/completions';
 
-  // Get the answer to the question
+  // 👇 New Together API Key
+  static const String _apiKey = '9f6e9a6b9e6e9b557e03a24132aea6b528449152e02dd8bcc3d541157686a592';
+  static const String _apiUrl = 'https://api.together.xyz/v1/chat/completions';
+
+  // Toggle for testing
+  static const bool useDummyResponse = false;
+
   Future<String> getAnswer(String question) async {
     try {
-      // First try Firestore lookup
+      print("👉 Getting answer for question: $question");
+
       final firestoreResponse = await _getFirestoreAnswer(question);
       if (firestoreResponse != null) {
-        return firestoreResponse; // Firestore solution found, return it
+        print("✅ Found Firestore match.");
+        return firestoreResponse;
       }
 
-      // If no Firestore match, use DeepSeek to fetch a detailed answer based on the content
-      return await _getDeepSeekResponse(question);
+      print("ℹ️ No Firestore match. Falling back to Together API...");
+
+      if (useDummyResponse) {
+        print("🧪 Using dummy response for testing.");
+        return "This is a test response generated locally.";
+      }
+
+      final aiResponse = await _getTogetherResponse(question);
+      print("✅ AI response received.");
+      return aiResponse;
     } catch (e, stackTrace) {
-      print('Error: $e');
-      print(stackTrace);
+      print('❌ ERROR in getAnswer(): $e');
+      print('STACKTRACE: $stackTrace');
       return 'An error occurred. Please try again later.';
     }
   }
 
   ////////////////////////////////////////////////
-  // Get answer from Firestore
+  // 🔎 Get answer from Firestore
   ////////////////////////////////////////////////
   Future<String?> _getFirestoreAnswer(String question) async {
     try {
       String normalizedQuestion = question.toLowerCase();
 
-      // Query Firestore for all solutions
-      QuerySnapshot querySnapshot =
-          await _firestore.collection('solutions').get();
+      QuerySnapshot querySnapshot = await _firestore.collection('solutions').get();
+      print("📄 Firestore documents fetched: ${querySnapshot.docs.length}");
 
-      // Iterate through the documents to find a match
       for (var doc in querySnapshot.docs) {
-        String title = doc['title']?.toString().toLowerCase() ?? '';
-        print(
-            'Comparing Question: "$normalizedQuestion" with Title: "$title"'); // Debug print
+        if (!doc.data().toString().contains('title')) {
+          print('⚠️ Skipping document [ID: ${doc.id}] - missing title');
+          continue;
+        }
 
-        // Match keywords in title using regex
-        RegExp regExp = RegExp(r'\b(?:' + _buildRegexPattern(title) + r')\b',
-            caseSensitive: false);
+        String title = doc['title']?.toString().toLowerCase() ?? '';
+        if (title.isEmpty) continue;
+
+        String pattern = _buildRegexPattern(title);
+        print('🔍 Comparing question "$normalizedQuestion" with pattern "$pattern"');
+
+        RegExp regExp = RegExp(r'\b(?:' + pattern + r')\b', caseSensitive: false);
 
         if (regExp.hasMatch(normalizedQuestion)) {
-          String content = doc['content'] ?? 'No content available.';
+          String content = doc['summary'] ?? doc['content'] ?? 'No content available.';
           String link = doc['link'] ?? '';
 
-          // Format the response based on Firestore article
           return _formatResponse(title, content, link);
         }
       }
-      return null; // No matching article found in Firestore
+
+      return null; // No match
     } catch (e) {
-      print('Firestore error: $e');
+      print('❌ Firestore error: $e');
       return null;
     }
   }
 
   ////////////////////////////////////////////////
-  // Get response from DeepSeek API with Firestore context
+  // 🤖 Get response from Together API
   ////////////////////////////////////////////////
-  Future<String> _getDeepSeekResponse(String question) async {
+  Future<String> _getTogetherResponse(String question) async {
+  try {
     final headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $_apiKey',
     };
 
-    // Query Firestore for all solutions
-    QuerySnapshot querySnapshot =
-        await _firestore.collection('solutions').get();
-
+    QuerySnapshot querySnapshot = await _firestore.collection('solutions').get();
     String relevantContent = '';
 
-    // Search Firestore for the most relevant article to provide context for DeepSeek
     for (var doc in querySnapshot.docs) {
-      String title = doc['title']?.toString().toLowerCase() ?? '';
+      if (!doc.data().toString().contains('title')) continue;
 
-      // Use regex to match relevant articles
-      RegExp regExp = RegExp(r'\b(?:' + _buildRegexPattern(title) + r')\b',
-          caseSensitive: false);
+      String title = doc['title']?.toString().toLowerCase() ?? '';
+      RegExp regExp = RegExp(r'\b(?:' + _buildRegexPattern(title) + r')\b', caseSensitive: false);
+
       if (regExp.hasMatch(question.toLowerCase())) {
-        relevantContent = doc['content'] ?? '';
-        break; // Stop after the first match
+        relevantContent = doc['summary'] ?? doc['content'] ?? '';
+        break;
       }
     }
 
-    // If no relevant Firestore article is found, fall back to a generic DeepSeek query
-    if (relevantContent.isEmpty) {
-      return "Sorry, I couldn't find a relevant solution article.";
+    String userPrompt;
+
+    if (relevantContent.isNotEmpty) {
+      print("✅ Firestore context found. Sending enhanced prompt.");
+      userPrompt =
+          "Based on the following content, please summarize and format a solution for the user:\n\n$relevantContent\n\nUser's question: $question";
+    } else {
+      print("⚠️ No context found. Sending raw user question to Together.");
+      userPrompt = question;
     }
 
     final body = jsonEncode({
-      "model": "deepseek-chat",
+      "model": "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8",
       "messages": [
         {
           "role": "system",
-          "content":
-              "You are a helpful assistant who specializes in IT solutions."
+          "content": "You are a helpful assistant who specializes in IT support at a university."
         },
         {
           "role": "user",
-          "content":
-              "Based on the following content, please summarize and format a solution for the user:\n\n$relevantContent\n\nUser's question: $question"
+          "content": userPrompt
         }
       ],
       "temperature": 0.7,
       "stream": false
     });
 
-    final response = await http.post(
-      Uri.parse(_apiUrl),
-      headers: headers,
-      body: body,
-    );
+    final response = await http.post(Uri.parse(_apiUrl), headers: headers, body: body);
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       return data['choices'][0]['message']['content'].trim();
     } else {
-      print('API Error: ${response.statusCode} - ${response.body}');
+      print('❌ API Error: ${response.statusCode} - ${response.body}');
       return "Sorry, I'm having trouble connecting to the assistant. Please try again later.";
     }
+  } catch (e) {
+    print('❌ Together API request failed: $e');
+    return "Sorry, something went wrong with the assistant.";
   }
+}
+
 
   ////////////////////////////////////////
-  // Format the chatbot response
+  // 🧾 Format chatbot response
   ////////////////////////////////////////
   String _formatResponse(String title, String content, String link) {
-    StringBuffer responseBuffer = StringBuffer();
-    responseBuffer.writeln('$title\n');
-    responseBuffer.writeln(content);
+    final buffer = StringBuffer();
+    buffer.writeln('$title\n');
+    buffer.writeln(content);
 
-    // If link is available, add a Markdown-style hyperlink
     if (link.isNotEmpty) {
-      responseBuffer.writeln('\n[View Full Solution]($link)');
+      buffer.writeln('\n[View Full Solution]($link)');
     }
 
-    return responseBuffer.toString(); // Markdown string for rendering
+    return buffer.toString();
   }
 
   ////////////////////////////////////////
-  // Build regex pattern from title words
+  // 🧠 Build regex pattern from title
   ////////////////////////////////////////
   String _buildRegexPattern(String title) {
-    List<String> titleWords = title.split(' ').where((word) {
-      return word.length > 3; // Filter out short words (like "the", "and")
-    }).toList();
-
-    return titleWords.join(r'\b|\b'); // Join words to form the regex pattern
+    List<String> words = title
+        .split(' ')
+        .where((word) => word.length > 3)
+        .map((word) => RegExp.escape(word))
+        .toList();
+    return words.join(r'\b|\b');
   }
 }
