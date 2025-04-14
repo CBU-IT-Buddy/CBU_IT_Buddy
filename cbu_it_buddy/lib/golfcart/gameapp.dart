@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'constants.dart';
 import 'golfcartgame.dart';
 import 'gametimer.dart';
-import 'lifecount.dart';
-import 'player.dart';
 
 // End game screen widget
 class GameEndScreen extends StatelessWidget {
