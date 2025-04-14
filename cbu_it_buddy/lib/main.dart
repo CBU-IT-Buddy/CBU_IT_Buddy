@@ -35,6 +35,7 @@ class CBUITBuddyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'CBU IT Buddy',
+      debugShowCheckedModeBanner: false, 
       theme: ThemeData(
         primarySwatch:createMaterialColor(cbuNavyBlue),
         appBarTheme: AppBarTheme(

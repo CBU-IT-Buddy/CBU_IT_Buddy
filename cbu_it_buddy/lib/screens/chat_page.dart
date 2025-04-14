@@ -76,8 +76,14 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("IT-Buddy"),
-      ),
+        toolbarHeight: 30.0,
+        centerTitle: true,
+        title: const Text( "IT-Buddy",
+    style: TextStyle(
+      fontWeight: FontWeight.bold, // Make the font bold
+    ),
+  ),
+),
       body: Column(
         children: [
           Expanded(

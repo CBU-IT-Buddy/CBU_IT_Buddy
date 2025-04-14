@@ -15,7 +15,7 @@ class DepartmentsContactPage extends StatelessWidget {
         child: ListView(
           children: const [
             DepartmentTile(
-              title: 'Information Technology Services',
+              title: 'IT Help Desk',
               hours: 'Monday-Friday: 8am - 5pm',
               location: 'James Building, Room 160',
               email: 'helpdesk@calbaptist.edu',
