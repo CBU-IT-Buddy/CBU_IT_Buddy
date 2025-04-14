@@ -5,6 +5,7 @@ import 'package:flame/components.dart';
 import 'package:flame/parallax.dart';
 import 'package:flutter/material.dart';
 import 'constants.dart';
+import 'gameapp.dart';
 import 'obstacle.dart';
 import 'player.dart';
 import 'lanemanager.dart';
@@ -47,14 +48,17 @@ class GolfCartGame extends FlameGame with HasCollisionDetection {
   final double increaseInterval = 10.0; // seconds
   final int maxObstacles = 6;
   final int minObstacles = 2; // Minimum number of obstacles to maintain
-  final String obstacleSprite = 'obstacle.png';
-  final List<String> movingObstacleSprites = ['male_scooterR.png', 'female_scooterR.png']; // TODO: change paths or file names after editing
-  final String playerSprite = 'golfcart.png';
+  final String obstacleSprite = 'obstacle.png'; // Updated path
+  final List<String> movingObstacleSprites = ['male_scooterR.png', 'female_scooterR.png']; // Updated paths
+  final String playerSprite = 'golfcart.png'; // Updated path
   final double playerWidth = 200;
   final double playerHeight = 260;
   final int difficultySpeedIncrease = 20;
   GameState gameState = GameState.GAME;
   bool timerEnd = false;
+  
+  // Callback for notifying UI of game state changes
+  void Function(GameState)? onGameStateChanged;
 
   GolfCartGame()
       : super(
@@ -70,12 +74,12 @@ class GolfCartGame extends FlameGame with HasCollisionDetection {
 
     // Background
     streetBG = await loadParallaxComponent(
-    [ParallaxImageData('street_bg.jpg')],
+    [ParallaxImageData('streetbg.jpg')],  // Updated path
     repeat: ImageRepeat.repeatY,
     baseVelocity: Vector2(0, -30),
     velocityMultiplierDelta: Vector2(0, speed),
     size: Vector2(gameWidth, gameHeight),
-    position: Vector2(-25, 0),
+    position: Vector2(0, 0),
     );
     add(streetBG);
 
@@ -108,7 +112,8 @@ class GolfCartGame extends FlameGame with HasCollisionDetection {
     timeSinceLastIncrease += dt;
     timerEnd = gameTimer.timerEnd;
 
-    if (timerEnd) {
+    // Check if game should end
+    if (timerEnd && gameState != GameState.END) {
       gameState = GameState.END;
       showEndGameScreen();
     }
@@ -232,7 +237,12 @@ class GolfCartGame extends FlameGame with HasCollisionDetection {
   }
 
   void showEndGameScreen() {
-    remove(player);
-    remove(streetBG);
+    // Notify UI that game has ended
+    if (onGameStateChanged != null) {
+      onGameStateChanged!(GameState.END);
+    }
+    
+    // Optional: pause the game
+    pauseEngine();
   }
 }

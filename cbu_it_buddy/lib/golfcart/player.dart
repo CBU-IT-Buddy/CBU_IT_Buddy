@@ -1,6 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
 import 'package:flutter/material.dart';
+import 'dart:ui' as ui;
 import 'golfcartgame.dart';
 import 'constants.dart';
 import 'obstacle.dart';
@@ -35,6 +36,13 @@ class Player extends SpriteComponent with HasGameRef<GolfCartGame>, CollisionCal
   double swipeDownTimer = 0.0; // Timer for swipe down duration
   final double swipeDownDuration = 1.0; // Duration in seconds
 
+  // Glow effect for invincibility
+  late Paint _glowPaint;
+  final double _glowIntensity = 15.0; // Glow intensity for invincibility effect
+  double _glowPulseTimer = 0.0; // Timer for pulsing glow effect
+  final double _glowPulseDuration = 0.5; // How fast the glow pulses
+  double _currentGlowIntensity = 0.0; // Current intensity that changes over time
+
   // Constructor
   Player({
     required Vector2 position,
@@ -52,7 +60,11 @@ class Player extends SpriteComponent with HasGameRef<GolfCartGame>, CollisionCal
           position: position,
           anchor: Anchor.center,
           size: Vector2(width, height),
-        );
+        ) {
+    _glowPaint = Paint()
+      ..color = Colors.yellow.withOpacity(0.5)
+      ..maskFilter = MaskFilter.blur(BlurStyle.normal, _glowIntensity);
+  }
 
   @override
   Future<void> onLoad() async {
@@ -76,6 +88,7 @@ class Player extends SpriteComponent with HasGameRef<GolfCartGame>, CollisionCal
     _updatePlayerPosition(dt);
     _updateFlashing(dt);
     _updateSwipeDown(dt);
+    _updateGlowEffect(dt);
     
     // Debug print for player move speed (only print occasionally to avoid console spam)
     if (gameRef.gameTime.toInt() % 5 == 0 && gameRef.gameTime.floor() != lastDebugPrintTime) {
@@ -119,6 +132,27 @@ class Player extends SpriteComponent with HasGameRef<GolfCartGame>, CollisionCal
         debugPrint('Swipe down effect ended');
       }
     }
+  }
+
+  void _updateGlowEffect(double dt) {
+    if (isInvincible) {
+      _glowPulseTimer += dt;
+      if (_glowPulseTimer >= _glowPulseDuration) {
+        _glowPulseTimer = 0.0;
+      }
+      _currentGlowIntensity = _glowIntensity * (0.5 + 0.5 * (1.0 - (_glowPulseTimer / _glowPulseDuration).abs()));
+      _glowPaint.maskFilter = MaskFilter.blur(BlurStyle.normal, _currentGlowIntensity);
+    }
+  }
+
+  @override
+  void render(Canvas canvas) {
+    if (isInvincible) {
+      canvas.save();
+      canvas.drawRect(size.toRect(), _glowPaint);
+      canvas.restore();
+    }
+    super.render(canvas);
   }
 
   void onSwipeLeft() {

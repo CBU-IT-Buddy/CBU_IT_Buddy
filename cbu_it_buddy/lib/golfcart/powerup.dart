@@ -1,9 +1,9 @@
 import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
-import 'package:flutter/material.dart';
 import 'constants.dart';
 import 'player.dart';
 import 'golfcartgame.dart';
+import 'package:flutter/material.dart';
 
 class PowerUp extends RectangleComponent with CollisionCallbacks, HasGameRef<GolfCartGame> {
   // Now only one type: 'invincibility'

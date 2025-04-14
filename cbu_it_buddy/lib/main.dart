@@ -8,6 +8,7 @@ import 'screens/faq_page.dart'; // Frequently Asked Q&A Page
 import 'screens/departments_contact_page.dart'; // CBU Departments Contact Page
 import 'screens/game_page.dart'; // IT Office Game page import
 import 'screens/chat_page.dart'; // Import the new ChatPage
+import 'golfcart/gameapp.dart'; // Import the GameView widget
 
 //////////////////////////////////////////////
 // Define CBU's Navy Blue as a constant
@@ -151,6 +152,17 @@ class _MainPageState extends State<MainPage> {
                   _selectedPage = const GamePage();
                 });
                 Navigator.pop(context); // Close the drawer
+              },
+            ),
+             ListTile(
+              leading: const Icon(Icons.videogame_asset),
+              title: const Text('Golfcart Game'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => GameView()),
+                );
+                // No need to set _selectedPage since we're navigating to a new route
               },
             ),
           ],

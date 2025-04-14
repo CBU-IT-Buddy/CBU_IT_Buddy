@@ -14,8 +14,8 @@ const obstacleSpeed1 = speed1 * 29.8; // scuffed same as background
 const obstacleSpeed2 = speed2 * 29.8;
 const obstacleSpeed3 = speed3 * 29.8;
 
-const lane1 = -315.0;
-const lane2 = -4.0;
-const lane3 = 308.0;
+const lane1 = -290.0;
+const lane2 = 21.0;
+const lane3 = 333.0;
 
 const List<double> lanes = [lane1, lane2, lane3];
