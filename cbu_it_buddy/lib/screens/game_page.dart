@@ -24,10 +24,7 @@ class _GamePageState extends State<GamePage>
   int _level = 1; // Level of the user is at.
   int _difficulty = 1;
   final int _ringingStationsCount = 1;
-  final int _ringingStationsCount = 1;
   bool _isDifficultyTwo = false;
-  final bool _isDifficultyThree = false;
-  final bool _isWalkInActive = false;
   final bool _isDifficultyThree = false;
   final bool _isWalkInActive = false;
   bool _walkInTriggered = false;

@@ -13,14 +13,12 @@ class ChatBubble extends StatelessWidget {
 
   const ChatBubble({
     super.key,
-    super.key,
     required this.message,
     required this.isUserMessage,
     this.userMessageStyle,
     this.aiMessageStyle,
     this.padding,
     this.margin,
-  });
   });
 
   //////////////////////////////////////////////
